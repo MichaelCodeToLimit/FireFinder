@@ -1,0 +1,13 @@
+{
+  "name": "@firefinder/client",
+  "version": "0.1.0",
+  "description": "Tiny typed HTTP client for the FireFinder API. Shared by every integration (Claude today, others later).",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@firefinder/core": "0.1.0"
+  }
+}

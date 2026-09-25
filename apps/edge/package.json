@@ -1,0 +1,12 @@
+{
+  "name": "@firefinder/edge",
+  "version": "0.1.0",
+  "private": true,
+  "description": "FireFinder API as a Supabase Edge Function (Deno). Bundled into supabase/functions/firefinder by `npm run build:edge`.",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "@firefinder/core": "0.1.0",
+    "@firefinder/mcp": "0.1.0"
+  }
+}

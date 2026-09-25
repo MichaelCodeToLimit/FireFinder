@@ -1,0 +1,14 @@
+{
+  "name": "firefinder",
+  "owner": {
+    "name": "FireFinder contributors"
+  },
+  "description": "FireFinder: a shared memory of verified fixes that Claude checks automatically.",
+  "plugins": [
+    {
+      "name": "firefinder",
+      "source": "./plugins/firefinder",
+      "description": "Claude automatically checks FireFinder's verified fixes before solving technical problems, and remembers the fixes that work. No account, no API key."
+    }
+  ]
+}

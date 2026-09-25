@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FireFinder Console</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%94%A5%3C/text%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="/console.css" />
+  </head>
+  <body>
+    <header class="top">
+      <div class="brand">
+        <span class="logo" aria-hidden="true">🔥</span>
+        <div>
+          <h1>FireFinder <span class="muted">console</span></h1>
+          <p class="tagline">When you're stuck in the fire, find the way out.</p>
+        </div>
+      </div>
+      <div class="status" id="status" role="status">checking API…</div>
+    </header>
+
+    <main>
+      <section class="panel key-panel">
+        <label for="api-key">API key</label>
+        <div class="row">
+          <input id="api-key" type="password" autocomplete="off" spellcheck="false" placeholder="ff_…" />
+          <button id="save-key" type="button" class="secondary">Use key</button>
+        </div>
+        <p class="hint">Kept in this tab only (sessionStorage). Create one with <code>npm run keys:create</code>.</p>
+      </section>
+
+      <nav class="tabs" role="tablist">
+        <button role="tab" aria-selected="true" data-tab="search">Search</button>
+        <button role="tab" aria-selected="false" data-tab="submit">Submit</button>
+        <button role="tab" aria-selected="false" data-tab="recent">Recent fires</button>
+      </nav>
+
+      <section class="panel" data-panel="search">
+        <form id="search-form" class="grid">
+          <label class="wide">Problem
+            <textarea name="problem" rows="2" required minlength="3" maxlength="1000" placeholder="Bluetooth is gone from my Windows laptop"></textarea>
+          </label>
+          <label>Software <input name="software" maxlength="100" placeholder="Blender" /></label>
+          <label>Operating system <input name="operating_system" maxlength="100" placeholder="Windows 11" /></label>
+          <label>Version <input name="software_version" maxlength="50" placeholder="4.1" /></label>
+          <label class="wide">Error message <input name="error_message" maxlength="1000" placeholder="ERR_OSSL_EVP_UNSUPPORTED" /></label>
+          <div class="wide actions"><button type="submit">Find the way out</button></div>
+        </form>
+        <p class="meta" id="search-meta"></p>
+        <div id="search-results" class="cards"></div>
+      </section>
+
+      <section class="panel" data-panel="submit" hidden>
+        <form id="submit-form" class="grid">
+          <label class="wide">Problem
+            <textarea name="problem" rows="2" required minlength="10" maxlength="1000" placeholder="Vercel deployment fails during build"></textarea>
+          </label>
+          <label class="wide">Solution
+            <textarea name="solution" rows="5" required minlength="10" maxlength="5000" placeholder="Change the build command to…"></textarea>
+          </label>
+          <label>Software <input name="software" maxlength="100" /></label>
+          <label>Operating system <input name="operating_system" maxlength="100" /></label>
+          <label>Version <input name="software_version" maxlength="50" /></label>
+          <label class="wide">Error message <input name="error_message" maxlength="1000" /></label>
+          <label class="wide check"><input type="checkbox" name="worked" /> The user confirmed this fix worked (stores it as verified)</label>
+          <div class="wide actions"><button type="submit">Submit solution</button></div>
+        </form>
+        <p class="hint">Only generalized problem/solution text is stored. Secrets and personal data are redacted automatically.</p>
+        <div id="submit-result" class="cards"></div>
+      </section>
+
+      <section class="panel" data-panel="recent" hidden>
+        <div class="row"><button id="load-recent" type="button" class="secondary">Refresh</button></div>
+        <div id="recent-results" class="cards"></div>
+      </section>
+    </main>
+
+    <template id="card-template">
+      <article class="card">
+        <header>
+          <span class="fire"></span>
+          <span class="badge"></span>
+          <span class="scores"></span>
+        </header>
+        <h3 class="problem"></h3>
+        <p class="error"></p>
+        <pre class="solution"></pre>
+        <p class="env"></p>
+        <p class="trust"></p>
+        <footer>
+          <button type="button" class="worked">✓ It worked</button>
+          <button type="button" class="failed secondary">✕ Didn't work</button>
+          <span class="feedback" role="status"></span>
+        </footer>
+      </article>
+    </template>
+
+    <script src="/console.js" type="module"></script>
+  </body>
+</html>

@@ -1,0 +1,27 @@
+node_modules/
+.env
+.env.*
+!.env.example
+
+# Local data: PGlite database, generated dev key and voter secret, model cache
+.data/
+.cache/
+
+# Build output
+packages/*/dist/
+supabase/functions/firefinder/index.js
+
+# Supabase CLI local state
+supabase/.temp/
+supabase/.branches/
+
+*.log
+.DS_Store
+Thumbs.db
+coverage/
+
+# Local Claude Code launch config
+.claude/
+
+# Plugin eval results
+plugins/*/evals/results/

@@ -1,0 +1,15 @@
+{
+  "name": "@firefinder/core",
+  "version": "0.1.0",
+  "description": "FireFinder domain logic: validation, privacy filtering, ranking, duplicate detection, storage and the HTTP API.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "hono": "4.13.9",
+    "zod": "4.6.5"
+  },
+  "sideEffects": false
+}

@@ -1,0 +1,11 @@
+{
+  "name": "firefinder",
+  "displayName": "FireFinder",
+  "version": "0.2.0",
+  "description": "When you're stuck in the fire, find the way out. Claude automatically checks a shared memory of verified fixes before solving technical problems, and remembers the fixes that work. No account, no API key.",
+  "author": {
+    "name": "FireFinder contributors"
+  },
+  "license": "MIT",
+  "keywords": ["troubleshooting", "errors", "debugging", "shared-memory", "verified-fixes"]
+}

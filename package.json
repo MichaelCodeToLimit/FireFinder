@@ -1,0 +1,39 @@
+{
+  "name": "firefinder",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared memory of verified solutions for AI assistants. When you're stuck in the fire, find the way out.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "node --env-file-if-exists=.env --watch apps/api/src/server.ts",
+    "start": "node --env-file-if-exists=.env apps/api/src/server.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc -p tsconfig.json",
+    "db:migrate": "node --env-file-if-exists=.env scripts/migrate.ts",
+    "keys:create": "node --env-file-if-exists=.env scripts/create-api-key.ts",
+    "mcp": "node --env-file-if-exists=.env packages/mcp/src/cli.ts",
+    "build:mcp": "node scripts/build.ts mcp",
+    "build:edge": "node scripts/build.ts edge",
+    "smoke": "node --env-file-if-exists=.env scripts/smoke.ts",
+    "demo": "node --env-file-if-exists=.env scripts/demo.ts",
+    "export:claude": "node scripts/export-claude-tools.ts",
+    "deploy:edge": "npm run build:edge && supabase functions deploy firefinder --use-api",
+    "smoke:mcp": "node --env-file-if-exists=.env scripts/mcp-smoke.ts"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite-socket": "0.2.11",
+    "@types/node": "24.13.6",
+    "esbuild": "0.28.2",
+    "typescript": "7.0.2",
+    "vitest": "5.0.2"
+  }
+}
