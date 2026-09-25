@@ -1,0 +1,1046 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FireFinder</title>
+<meta name="description" content="FireFinder gives Claude a shared memory of fixes that people confirmed worked. Connect it once and Claude checks it before solving a technical problem.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="FireFinder">
+<meta property="og:description" content="When you're stuck in the fire, find the way out. A shared memory of verified fixes for Claude. No account, no API key.">
+<meta name="theme-color" content="#eff3ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0e1512" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cstyle%3E.i%7Bstroke:%2314201a%7D@media (prefers-color-scheme:dark)%7B.i%7Bstroke:%23e6ede8%7D%7D%3C/style%3E%3Ccircle class='i' cx='16' cy='16' r='13' fill='none' stroke-width='2.5'/%3E%3Cpath class='i' d='M16 3v4M29 16h-4M16 29v-4M3 16h4' stroke-width='2'/%3E%3Cpath class='i' d='M16 16L8.7 26.8' stroke-width='1.5' stroke-linecap='round'/%3E%3Ccircle cx='11' cy='23.5' r='3.4' fill='%23e0520e'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:ital,wght@0,400..700;1,400&display=swap">
+<style>
+:root {
+  --ground: #eff3ee;
+  --surface: #ffffff;
+  --surface-2: #e5ebe5;
+  --ink: #14201a;
+  --ink-2: #33433a;
+  --muted: #5a6961;
+  --rule: #d2dbd3;
+  --contour: #c8ab91;
+  --flare: #e0520e;
+  --flare-text: #b43f07;
+  --flare-soft: #fbe6d9;
+  --ok: #1b7446;
+  --ok-soft: #dcefe2;
+  --bad: #b3261e;
+  --bad-soft: #f8e1df;
+  --code-bg: #14201a;
+  --code-ink: #e3ebe5;
+  --code-muted: #93a59b;
+  --code-border: #14201a;
+  --shadow: 0 1px 0 rgba(20, 32, 26, .04), 0 18px 40px -24px rgba(20, 32, 26, .35);
+  --display: "Archivo", "Helvetica Neue", Arial, system-ui, sans-serif;
+  --body: "Public Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #0e1512;
+    --surface: #151f1a;
+    --surface-2: #1a2620;
+    --ink: #e6ede8;
+    --ink-2: #c1cdc6;
+    --muted: #92a39a;
+    --rule: #27352e;
+    --contour: #5b4a3b;
+    --flare: #ff7a3d;
+    --flare-text: #ff9a66;
+    --flare-soft: #3a2116;
+    --ok: #62d396;
+    --ok-soft: #173325;
+    --bad: #ff8a80;
+    --bad-soft: #3a1c1a;
+    --code-bg: #0a100d;
+    --code-ink: #e3ebe5;
+    --code-muted: #8a9c93;
+    --code-border: #27352e;
+    --shadow: 0 18px 40px -24px rgba(0, 0, 0, .7);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --ground: #0e1512;
+  --surface: #151f1a;
+  --surface-2: #1a2620;
+  --ink: #e6ede8;
+  --ink-2: #c1cdc6;
+  --muted: #92a39a;
+  --rule: #27352e;
+  --contour: #5b4a3b;
+  --flare: #ff7a3d;
+  --flare-text: #ff9a66;
+  --flare-soft: #3a2116;
+  --ok: #62d396;
+  --ok-soft: #173325;
+  --bad: #ff8a80;
+  --bad-soft: #3a1c1a;
+  --code-bg: #0a100d;
+  --code-ink: #e3ebe5;
+  --code-muted: #8a9c93;
+  --code-border: #27352e;
+  --shadow: 0 18px 40px -24px rgba(0, 0, 0, .7);
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 84px; }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font: 400 17px/1.6 var(--body);
+  -webkit-font-smoothing: antialiased;
+}
+img, svg { max-width: 100%; }
+a { color: var(--flare-text); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid var(--flare); outline-offset: 3px; border-radius: 4px; }
+p { margin: 0; }
+b, strong { font-weight: 650; }
+code { font-family: var(--mono); font-size: .86em; background: var(--surface-2); padding: .12em .38em; border-radius: 4px; }
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+h2 {
+  font-family: var(--display);
+  font-stretch: 110%;
+  font-weight: 760;
+  font-size: clamp(1.75rem, 3.4vw, 2.55rem);
+  line-height: 1.08;
+  letter-spacing: -.015em;
+}
+h3 { font-family: var(--display); font-stretch: 104%; font-weight: 700; font-size: 1.08rem; line-height: 1.3; }
+
+.wrap { max-width: 1140px; margin-inline: auto; padding-inline: 20px; }
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.section { padding-block: clamp(64px, 9vw, 104px); }
+.section.flush { padding-top: 0; }
+.section-head { display: grid; gap: 14px; max-width: 40rem; }
+.section-head p:not(.eyebrow) { color: var(--ink-2); font-size: 1.06rem; }
+
+/* Header */
+.top {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  padding-top: env(safe-area-inset-top, 0px);
+  background: color-mix(in srgb, var(--ground) 86%, transparent);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--rule);
+}
+.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 62px; }
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+  text-decoration: none;
+  font-family: var(--display);
+  font-stretch: 120%;
+  font-weight: 820;
+  font-size: 18px;
+  letter-spacing: .01em;
+}
+.mark { width: 28px; height: 28px; flex: none; color: var(--ink); }
+.nav { display: flex; align-items: center; gap: 24px; font-size: 15px; }
+.nav a:not(.btn) { color: var(--ink-2); text-decoration: none; }
+.nav a:not(.btn):hover { color: var(--ink); }
+@media (max-width: 700px) { .nav a:not(.btn) { display: none; } }
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: 6px;
+  border: 1.5px solid var(--ink);
+  font: 600 16px/1 var(--body);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color .15s, color .15s, border-color .15s;
+}
+.btn-primary { background: var(--ink); color: var(--ground); }
+.btn-primary:hover { background: var(--ink-2); border-color: var(--ink-2); }
+.btn-ghost { background: transparent; color: var(--ink); }
+.btn-ghost:hover { background: var(--surface); }
+.btn-sm { min-height: 38px; padding: 0 14px; font-size: 14.5px; }
+.btn svg { width: 18px; height: 18px; }
+
+/* Hero */
+.hero { padding-block: clamp(48px, 7vw, 88px) clamp(56px, 7vw, 96px); }
+.hero .wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr);
+  gap: clamp(40px, 6vw, 80px);
+  align-items: center;
+}
+.hero-copy { display: grid; gap: 24px; justify-items: start; }
+h1 {
+  font-family: var(--display);
+  font-stretch: 116%;
+  font-weight: 830;
+  font-size: clamp(2.45rem, 5.6vw, 4.35rem);
+  line-height: 1.0;
+  letter-spacing: -.025em;
+}
+h1 em { font-style: normal; color: var(--flare); }
+.lede { font-size: clamp(1.06rem, 1.5vw, 1.2rem); color: var(--ink-2); max-width: 33em; }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; }
+.facts {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  font-size: 14.5px;
+  color: var(--muted);
+}
+.facts li { display: inline-flex; align-items: center; gap: 7px; }
+.facts li::before { content: "✓"; color: var(--ok); font-weight: 700; }
+
+.finder { margin: 0; display: grid; gap: 16px; justify-items: center; }
+.finder-svg { width: 100%; max-width: 440px; height: auto; display: block; overflow: visible; }
+.plate { fill: var(--surface); stroke: var(--rule); stroke-width: 1; }
+.map-bg { fill: var(--ground); }
+.ring { fill: none; stroke: var(--ink); stroke-width: 1.6; }
+.ring.thin { stroke-width: 1; }
+.tick { stroke: var(--ink); stroke-width: 1; opacity: .5; }
+.tick.major { stroke-width: 1.4; opacity: 1; }
+.deg { font: 500 11px var(--mono); fill: var(--ink-2); text-anchor: middle; dominant-baseline: central; }
+.contour { fill: none; stroke: var(--contour); stroke-width: 1; }
+.contour.index { stroke-width: 1.9; }
+.sight-bar { fill: var(--ink); opacity: .07; }
+.sight-hair { stroke: var(--flare); stroke-width: 1.3; }
+.sight-front, .sight-rear { fill: var(--ink); }
+.lookout { fill: var(--ink); }
+.fire-mark { transition: opacity .5s ease-out; }
+.fire-mark.unlit { opacity: 0; }
+.fire-dot { fill: var(--flare); }
+.fire-pulse {
+  fill: none;
+  stroke: var(--flare);
+  stroke-width: 2;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pulse 2.6s ease-out infinite;
+}
+.fire-label {
+  font: 500 11.5px var(--mono);
+  letter-spacing: .04em;
+  fill: var(--ink);
+  paint-order: stroke;
+  stroke: var(--ground);
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}
+@keyframes pulse { from { transform: scale(1); opacity: .85; } to { transform: scale(3.4); opacity: 0; } }
+
+.readout {
+  width: 100%;
+  max-width: 440px;
+  margin: 0;
+  padding: 12px 16px;
+  display: grid;
+  gap: 5px;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  font: 13px/1.5 var(--mono);
+}
+.readout div { display: grid; grid-template-columns: 5.6em minmax(0, 1fr); gap: 12px; }
+.readout dt { color: var(--muted); text-transform: uppercase; letter-spacing: .07em; }
+.readout dd { margin: 0; font-variant-numeric: tabular-nums; }
+.ok-text { color: var(--ok); font-weight: 500; }
+.finder figcaption { max-width: 440px; font-size: 13.5px; line-height: 1.5; color: var(--muted); }
+
+@media (max-width: 900px) {
+  .hero .wrap { grid-template-columns: minmax(0, 1fr); }
+  .finder-svg { max-width: 380px; }
+}
+
+/* Example conversation */
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+  gap: clamp(36px, 6vw, 80px);
+  align-items: center;
+}
+.split .copy { display: grid; gap: 16px; max-width: 32rem; }
+.split .copy p:not(.eyebrow) { color: var(--ink-2); }
+@media (max-width: 900px) { .split { grid-template-columns: minmax(0, 1fr); } }
+
+.chat {
+  display: grid;
+  gap: 14px;
+  padding: clamp(16px, 3vw, 24px);
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  font-size: 15.5px;
+}
+.chat-label { font: 500 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.msg { display: grid; gap: 4px; }
+.who { font: 500 11.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.msg.you { justify-self: end; max-width: 86%; padding: 10px 14px; background: var(--surface-2); border-radius: 10px 10px 2px 10px; }
+.tool {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font: 12.5px/1.4 var(--mono);
+  color: var(--muted);
+}
+.tool::before { content: ""; width: 14px; height: 1px; background: currentColor; }
+.tool b { font-weight: 500; color: var(--ink-2); }
+.tool.ok b { color: var(--ok); }
+.fire {
+  margin-top: 8px;
+  padding: 14px 16px;
+  background: var(--ground);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  display: grid;
+  gap: 6px;
+}
+.fire-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font: 500 14px var(--mono); }
+.pill { display: inline-flex; align-items: center; font: 500 12px/1 var(--mono); padding: 5px 9px; border-radius: 999px; white-space: nowrap; }
+.pill.ok { background: var(--ok-soft); color: var(--ok); }
+.pill.bad { background: var(--bad-soft); color: var(--bad); }
+.pill.flare { background: var(--flare-soft); color: var(--flare-text); }
+.pill.none { background: transparent; color: var(--muted); border: 1px dashed var(--rule); }
+.fire-stats { font: 12.5px/1.5 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.fire dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 14px; margin: 6px 0 0; }
+.fire dt { font: 500 11.5px/1.9 var(--mono); letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+.fire dd { margin: 0; }
+@media (max-width: 480px) { .fire dl { grid-template-columns: minmax(0, 1fr); gap: 2px; } .fire dd + dt { margin-top: 8px; } }
+
+/* Install */
+.install { background: var(--surface-2); border-block: 1px solid var(--rule); }
+.install .wrap {
+  display: grid;
+  grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr);
+  gap: clamp(36px, 6vw, 72px);
+  align-items: start;
+}
+.install .section-head { position: sticky; top: 104px; }
+.without { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 8px; font-size: 15.5px; color: var(--ink-2); }
+.without li { display: flex; gap: 10px; align-items: baseline; }
+.without li::before { content: "—"; color: var(--muted); }
+@media (max-width: 900px) {
+  .install .wrap { grid-template-columns: minmax(0, 1fr); }
+  .install .section-head { position: static; }
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 4px;
+  background: var(--ground);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+}
+.tabs button {
+  border: 0;
+  background: transparent;
+  color: var(--ink-2);
+  font: 600 15px/1.2 var(--body);
+  padding: 10px 14px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+.tabs button:hover { color: var(--ink); }
+.tabs button[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0, 0, 0, .1), 0 0 0 1px var(--rule); }
+.panel {
+  margin-top: 14px;
+  padding: clamp(20px, 3.2vw, 32px);
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+.panel-intro { color: var(--ink-2); margin-bottom: 24px; }
+.steps { list-style: none; counter-reset: step; margin: 0; padding: 0; display: grid; gap: 28px; }
+.steps > li { counter-increment: step; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 16px; }
+.steps > li::before {
+  content: counter(step);
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1.5px solid var(--ink);
+  border-radius: 50%;
+  font: 500 14px/1 var(--mono);
+}
+.step { display: grid; gap: 6px; padding-top: 5px; min-width: 0; }
+.step p { color: var(--ink-2); }
+.note { font-size: 14.5px; color: var(--muted) !important; }
+.panel-foot { margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--rule); display: grid; gap: 10px; font-size: 15px; color: var(--muted); }
+
+.code {
+  display: flex;
+  align-items: stretch;
+  margin-top: 6px;
+  background: var(--code-bg);
+  color: var(--code-ink);
+  border: 1px solid var(--code-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.code + .code { margin-top: 8px; }
+.code pre { flex: 1; min-width: 0; margin: 0; padding: 12px 14px; white-space: pre-wrap; overflow-wrap: anywhere; font: 14px/1.55 var(--mono); }
+.code code { background: none; padding: 0; font-size: inherit; color: inherit; border-radius: 0; }
+.code button {
+  flex: none;
+  min-width: 76px;
+  padding: 0 14px;
+  border: 0;
+  border-left: 1px solid rgba(255, 255, 255, .1);
+  background: transparent;
+  color: var(--code-muted);
+  font: 500 12px var(--mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.code button:hover { color: #fff; background: rgba(255, 255, 255, .06); }
+.code button.done { color: #7ee2a8; }
+@media (max-width: 560px) {
+  .tabs { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
+  .tabs button:first-child { grid-column: 1 / -1; }
+  .steps > li { grid-template-columns: 28px minmax(0, 1fr); gap: 12px; }
+  .steps > li::before { width: 28px; height: 28px; font-size: 13px; }
+  .step { padding-top: 2px; }
+  .code pre { padding: 10px 12px; font-size: 13px; }
+  .code button { min-width: 62px; padding: 0 10px; }
+}
+
+/* How it works */
+.loop {
+  list-style: none;
+  margin: 48px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 36px 32px;
+}
+.loop li { display: grid; gap: 10px; align-content: start; padding-top: 16px; border-top: 2px solid var(--ink); }
+.loop li:last-child { border-top-color: var(--flare); }
+.loop .n { font: 500 13px var(--mono); color: var(--muted); letter-spacing: .06em; }
+.loop p { color: var(--ink-2); font-size: 16px; }
+.loop-after { margin-top: 28px; font-size: 15.5px; color: var(--muted); max-width: 46rem; }
+.loop-after b { color: var(--ink); }
+@media (max-width: 980px) { .loop { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .loop { grid-template-columns: minmax(0, 1fr); } }
+
+.evidence { margin-top: clamp(56px, 8vw, 88px); align-items: start; }
+.evidence h2 { font-size: clamp(1.5rem, 2.6vw, 1.95rem); }
+.table-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; }
+table { width: 100%; border-collapse: collapse; font-size: 15.5px; }
+th {
+  text-align: left;
+  font: 500 12px var(--mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--rule);
+}
+td { padding: 13px 18px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+td:first-child { min-width: 11rem; }
+td .ctx { display: block; font-size: 13.5px; color: var(--muted); }
+td.result { white-space: nowrap; }
+
+/* Trust */
+.trust .wrap > .split { align-items: start; margin-top: 48px; }
+.points { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 32px 28px; }
+.points div { display: grid; gap: 8px; align-content: start; }
+.points p { color: var(--ink-2); font-size: 16px; }
+
+.rank { display: grid; gap: 18px; padding: clamp(20px, 3vw, 28px); background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; }
+.formula { font: 13.5px/1.6 var(--mono); color: var(--ink-2); padding: 10px 12px; background: var(--ground); border-radius: 6px; }
+.bar-wrap { display: grid; gap: 6px; }
+.bar { display: flex; gap: 2px; height: 16px; }
+.seg { border-radius: 2px; min-width: 3px; }
+.seg.rel { background: var(--flare); }
+.seg.ver { background: var(--ok); }
+.seg.env { background: var(--ink-2); }
+.seg.rec { background: var(--muted); opacity: .6; }
+.seg.fail { background: repeating-linear-gradient(135deg, var(--bad) 0 3px, transparent 3px 6px); border: 1px solid var(--bad); }
+.zero { width: 2px; margin-inline: 2px; background: var(--ink); height: 26px; margin-top: -5px; }
+.axis { position: relative; height: 16px; font: 11.5px var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.axis span { position: absolute; top: 0; }
+.axis span:nth-child(2) { transform: translateX(-50%); }
+.axis span:last-child { right: 0; }
+.legend { list-style: none; margin: 0; padding: 0; display: grid; }
+.legend li {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr) auto;
+  gap: 4px 12px;
+  align-items: baseline;
+  padding-block: 10px;
+  border-top: 1px solid var(--rule);
+  font-size: 15px;
+}
+.legend .sw { width: 12px; height: 12px; border-radius: 2px; align-self: center; }
+.legend .name { font-weight: 650; }
+.legend .desc { grid-column: 2 / 4; color: var(--muted); font-size: 14px; line-height: 1.5; }
+.legend .w { font: 500 13.5px var(--mono); font-variant-numeric: tabular-nums; color: var(--ink-2); }
+
+/* Privacy */
+.ledger {
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.ledger > div { padding: clamp(20px, 3vw, 28px); display: grid; gap: 14px; align-content: start; }
+.ledger > div + div { border-left: 1px solid var(--rule); }
+.ledger ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; color: var(--ink-2); }
+.ledger li { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 8px; }
+.ledger .kept li::before { content: "✓"; color: var(--ok); font-weight: 700; }
+.ledger .never li::before { content: "✕"; color: var(--bad); font-weight: 700; }
+.filter-note { margin-top: 24px; max-width: 46rem; color: var(--ink-2); }
+@media (max-width: 700px) {
+  .ledger { grid-template-columns: minmax(0, 1fr); }
+  .ledger > div + div { border-left: 0; border-top: 1px solid var(--rule); }
+}
+
+/* Closing */
+.closing { border-top: 1px solid var(--rule); }
+.closing .wrap { display: grid; gap: 24px; justify-items: start; }
+.closing h2 { font-size: clamp(2.2rem, 5vw, 3.6rem); font-stretch: 118%; font-weight: 830; line-height: 1.02; }
+.closing p { color: var(--ink-2); font-size: 1.1rem; max-width: 34rem; }
+
+footer { border-top: 1px solid var(--rule); padding-block: 28px calc(28px + env(safe-area-inset-bottom, 0px)); font-size: 14.5px; color: var(--muted); }
+footer .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 32px; }
+footer .brand { font-size: 15px; }
+footer .mark { width: 22px; height: 22px; }
+footer nav { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+footer a { color: var(--ink-2); text-decoration: none; }
+footer a:hover { color: var(--ink); text-decoration: underline; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .fire-pulse { animation: none; opacity: .35; transform: scale(2); }
+  .fire-mark, .btn { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="FireFinder home">
+      <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M16 3v4M29 16h-4M16 29v-4M3 16h4" stroke="currentColor" stroke-width="2"/><path d="M16 16L8.7 26.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="11" cy="23.5" r="3.4" fill="var(--flare)"/></svg>
+      FireFinder
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="#how">How it works</a>
+      <a href="#privacy">Privacy</a>
+      <a href="https://github.com/MichaelCodeToLimit/FireFinder">GitHub</a>
+      <a class="btn btn-primary btn-sm" href="#install">Install</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-copy">
+        <p class="eyebrow">Shared memory of verified fixes for Claude</p>
+        <h1>When you're stuck in the fire, <em>find the way out.</em></h1>
+        <p class="lede">FireFinder gives Claude a memory of fixes that people confirmed actually worked. Connect it once. From then on, Claude checks it before solving a technical problem and remembers every fix that works for the next person who hits it.</p>
+        <div class="cta">
+          <a class="btn btn-primary" href="#install">Install FireFinder</a>
+          <a class="btn btn-ghost" href="#how">How it works</a>
+        </div>
+        <ul class="facts" aria-label="Highlights">
+          <li>No account</li>
+          <li>No API key</li>
+          <li>Never stores conversations</li>
+          <li>MIT licensed</li>
+        </ul>
+      </div>
+
+      <figure class="finder">
+        <svg class="finder-svg" viewBox="0 0 440 440" role="img" aria-labelledby="finder-title">
+          <title id="finder-title">A fire finder's azimuth ring over a contour map, sighted on a fire at a bearing of 214 degrees</title>
+          <defs><clipPath id="map-clip"><circle cx="220" cy="220" r="163"/></clipPath></defs>
+          <circle class="plate" cx="220" cy="220" r="216"/>
+          <circle class="map-bg" cx="220" cy="220" r="164"/>
+          <g clip-path="url(#map-clip)"><g id="contours"></g></g>
+          <circle class="ring" cx="220" cy="220" r="204"/>
+          <circle class="ring thin" cx="220" cy="220" r="164"/>
+          <g id="ticks"></g>
+          <g id="sight" transform="rotate(214 220 220)">
+            <rect class="sight-bar" x="212" y="14" width="16" height="412" rx="3"/>
+            <line class="sight-hair" x1="220" y1="18" x2="220" y2="422"/>
+            <path class="sight-front" d="M213 2h14l-7 13z"/>
+            <rect class="sight-rear" x="215" y="425" width="10" height="11" rx="1.5"/>
+          </g>
+          <path class="lookout" d="M220 211l8 14h-16z"/>
+          <g id="fire" class="fire-mark">
+            <circle class="fire-pulse" cx="157.4" cy="312.9" r="7"/>
+            <circle class="fire-dot" cx="157.4" cy="312.9" r="6.5"/>
+            <text class="fire-label" x="171" y="317">FIRE #18492</text>
+          </g>
+        </svg>
+        <dl class="readout" aria-label="Example reading">
+          <div><dt>Bearing</dt><dd id="bearing">214°</dd></div>
+          <div><dt>Fire</dt><dd>#18492 · Vercel deployment fails during build</dd></div>
+          <div><dt>Status</dt><dd><span class="ok-text">✓ verified</span> · confirmed by 127</dd></div>
+        </dl>
+        <figcaption>Named after the Osborne Fire Finder, the sighting instrument in fire lookout towers that takes a bearing on distant smoke. Example reading.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section flush" id="see">
+    <div class="wrap split">
+      <div class="copy">
+        <p class="eyebrow">What you'll see</p>
+        <h2>The next person gets the fix first</h2>
+        <p>There's nothing to operate. You ask Claude for help the way you always do. When your problem already has a verified fix, Claude leads with it and tells you how many people it worked for.</p>
+        <p>When nothing relevant exists, Claude doesn't mention FireFinder at all. You never see "no results" or extra steps.</p>
+      </div>
+      <div class="chat" role="group" aria-label="Example conversation">
+        <p class="chat-label">Example conversation</p>
+        <div class="msg you"><span class="who">You</span><p>My Vercel deployment fails during the build step. It worked yesterday.</p></div>
+        <p class="tool"><b>search_firefinder</b> 1 verified match</p>
+        <div class="msg">
+          <span class="who">Claude</span>
+          <p>This is a known fix, confirmed by 127 people:</p>
+          <div class="fire">
+            <div class="fire-head"><span>🔥 FIRE #18492</span><span class="pill ok">✓ verified</span></div>
+            <p class="fire-stats">confirmed by 127 · ✕ 4 failed · last confirmed 3 hours ago</p>
+            <dl>
+              <dt>Problem</dt><dd>Vercel deployment fails during build</dd>
+              <dt>Solution</dt><dd>Change the build command to <code>npm run build</code> and the output directory to <code>dist</code>, then redeploy.</dd>
+            </dl>
+          </div>
+        </div>
+        <div class="msg you"><span class="who">You</span><p>That fixed it.</p></div>
+        <p class="tool ok"><b>confirm_solution</b> confirmed by 128</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section install" id="install">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Install</p>
+        <h2>Connect it once. That's the whole setup.</h2>
+        <p>FireFinder is a remote MCP server. Add it to Claude and it works on its own from then on, in every conversation.</p>
+        <ul class="without" aria-label="What you don't need">
+          <li>No account to create</li>
+          <li>No API key to paste</li>
+          <li>No change to how you ask Claude for help</li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="tabs" role="tablist" aria-label="Where you use Claude">
+          <button type="button" role="tab" id="tab-apps" aria-controls="install-apps" aria-selected="true">claude.ai, Desktop &amp; mobile</button>
+          <button type="button" role="tab" id="tab-code" aria-controls="install-code" aria-selected="false" tabindex="-1">Claude Code</button>
+          <button type="button" role="tab" id="tab-self" aria-controls="install-self" aria-selected="false" tabindex="-1">Self-host</button>
+        </div>
+
+        <div class="panel" role="tabpanel" id="install-apps" aria-labelledby="tab-apps" tabindex="0">
+          <ol class="steps">
+            <li><div class="step">
+              <h3>Open connector settings</h3>
+              <p>In Claude, go to <b>Customize → Connectors</b>, click <b>+</b>, then <b>Add custom connector</b>.</p>
+              <p class="note">On a Team or Enterprise plan, an owner adds it first under Organization settings → Connectors → Add → Custom → Web. Each member then clicks Connect.</p>
+            </div></li>
+            <li><div class="step">
+              <h3>Name it and paste the URL</h3>
+              <p>Name it <b>FireFinder</b> and use this URL. Leave <b>Advanced settings</b> (OAuth client ID and secret) empty.</p>
+              <div class="code"><pre><code>https://wmrkcgivrurnycfqjznp.supabase.co/functions/v1/firefinder/mcp</code></pre><button type="button" aria-label="Copy connector URL">Copy</button></div>
+            </div></li>
+            <li><div class="step">
+              <h3>Click Add, then Connect</h3>
+              <p>A window opens and closes by itself. There's no login: FireFinder gives this connection an anonymous identity so votes count once and limits apply fairly.</p>
+            </div></li>
+            <li><div class="step">
+              <h3>Choose “Allow always”</h3>
+              <p>If Claude asks for permission the first time it uses FireFinder, allow it always. After that, you never have to think about it.</p>
+            </div></li>
+          </ol>
+          <div class="panel-foot">
+            <p>A connector added on claude.ai also shows up in Claude Desktop and the Claude mobile apps signed in to the same account. Free plans allow one custom connector.</p>
+          </div>
+        </div>
+
+        <div class="panel" role="tabpanel" id="install-code" aria-labelledby="tab-code" tabindex="0">
+          <ol class="steps">
+            <li><div class="step">
+              <h3>Install the plugin</h3>
+              <p>Run these two commands in Claude Code, one at a time.</p>
+              <div class="code"><pre><code>/plugin marketplace add https://github.com/MichaelCodeToLimit/FireFinder.git</code></pre><button type="button" aria-label="Copy marketplace command">Copy</button></div>
+              <div class="code"><pre><code>/plugin install firefinder@firefinder</code></pre><button type="button" aria-label="Copy install command">Copy</button></div>
+            </div></li>
+            <li><div class="step">
+              <h3>Authenticate once</h3>
+              <p>Run <code>/mcp</code>, select <b>firefinder</b>, and choose <b>Authenticate</b>. A browser tab opens and returns immediately, because there's no login.</p>
+            </div></li>
+            <li><div class="step">
+              <h3>Keep working</h3>
+              <p>The plugin includes a skill that tells Claude when to search FireFinder and when to record a fix. You don't need to mention it.</p>
+            </div></li>
+          </ol>
+          <div class="panel-foot">
+            <p>Prefer to skip the plugin? Add the server directly:</p>
+            <div class="code"><pre><code>claude mcp add --transport http firefinder https://wmrkcgivrurnycfqjznp.supabase.co/functions/v1/firefinder/mcp</code></pre><button type="button" aria-label="Copy claude mcp add command">Copy</button></div>
+          </div>
+        </div>
+
+        <div class="panel" role="tabpanel" id="install-self" aria-labelledby="tab-self" tabindex="0">
+          <p class="panel-intro">Run your own FireFinder. You need Node.js 22.18 or later (24 recommended). No Docker, no database install and no cloud account.</p>
+          <ol class="steps">
+            <li><div class="step">
+              <h3>Get the code</h3>
+              <div class="code"><pre><code>git clone https://github.com/MichaelCodeToLimit/FireFinder.git</code></pre><button type="button" aria-label="Copy git clone command">Copy</button></div>
+              <div class="code"><pre><code>cd FireFinder</code></pre><button type="button" aria-label="Copy cd command">Copy</button></div>
+              <div class="code"><pre><code>npm install</code></pre><button type="button" aria-label="Copy npm install command">Copy</button></div>
+            </div></li>
+            <li><div class="step">
+              <h3>Start it</h3>
+              <div class="code"><pre><code>npm run dev</code></pre><button type="button" aria-label="Copy npm run dev command">Copy</button></div>
+              <p>The API, the MCP endpoint and a developer console start at <code>http://localhost:8787</code>, with an embedded Postgres + pgvector database and the gte-small embedding model, downloaded once (about 34 MB). No <code>.env</code> file needed.</p>
+            </div></li>
+            <li><div class="step">
+              <h3>Deploy and connect</h3>
+              <p>Deploy to Supabase's free tier, or run it anywhere with Node and a Postgres 15+ database that has pgvector. Then add <code>https://&lt;your-host&gt;/mcp</code> as a custom connector, the same way as above.</p>
+            </div></li>
+          </ol>
+          <div class="panel-foot">
+            <p>Step by step, with troubleshooting: <a href="https://github.com/MichaelCodeToLimit/FireFinder/blob/main/docs/DEPLOYMENT.md">deployment guide</a>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="how">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">How it works</p>
+        <h2>Solve it once. Everyone after you starts with the fix.</h2>
+      </div>
+      <ol class="loop">
+        <li>
+          <span class="n">1</span>
+          <h3>You describe a problem</h3>
+          <p>An error, a crash, a failing build or deploy, a broken setting. General questions, writing and math never touch FireFinder.</p>
+        </li>
+        <li>
+          <span class="n">2</span>
+          <h3>Claude checks first</h3>
+          <p>Before answering, Claude searches FireFinder. It only gets strong, verified matches back: similarity of 0.85 or more, at least one confirmation, three results at most.</p>
+        </li>
+        <li>
+          <span class="n">3</span>
+          <h3>A verified fix, or silence</h3>
+          <p>If a fix fits your setup, Claude offers it first. If nothing fits, Claude solves the problem normally and doesn't bring FireFinder up.</p>
+        </li>
+        <li>
+          <span class="n">4</span>
+          <h3>Your words record the outcome</h3>
+          <p>Say it worked, and the fix is saved or confirmed for the next person. Say it didn't, and the failure is counted.</p>
+        </li>
+      </ol>
+      <p class="loop-after">Search works on meaning. <b>"My Windows Bluetooth disappeared"</b> and <b>"Windows doesn't show Bluetooth anymore"</b> find the same fix, and so do exact error codes like <code>ERR_OSSL_EVP_UNSUPPORTED</code> or <code>0x80070005</code>.</p>
+
+      <div class="split evidence">
+        <div class="copy">
+          <h2>Only your words count</h2>
+          <p>Every save, confirmation or failure report carries the user's own words, and the FireFinder server checks them before recording anything. Claude's confidence is never evidence.</p>
+          <p>This behavior is tested with real Claude sessions and passed 14 of 14 eval runs.</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">You say</th><th scope="col">Recorded</th></tr></thead>
+            <tbody>
+              <tr><td>“That fixed it.”<span class="ctx">after a fix Claude came up with</span></td><td class="result"><span class="pill flare">new fix saved</span></td></tr>
+              <tr><td>“That worked.”<span class="ctx">after a FireFinder fix</span></td><td class="result"><span class="pill ok">+1 confirmed</span></td></tr>
+              <tr><td>“Still broken.” “Same error.”</td><td class="result"><span class="pill bad">+1 failed</span></td></tr>
+              <tr><td>“Thanks!”</td><td class="result"><span class="pill none">nothing</span></td></tr>
+              <tr><td>“I'll try that.”</td><td class="result"><span class="pill none">nothing</span></td></tr>
+              <tr><td>Silence, or Claude being sure</td><td class="result"><span class="pill none">nothing</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section trust flush" id="trust">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Trust</p>
+        <h2>Only fixes that worked for someone</h2>
+        <p>FireFinder is a record of outcomes. A fix earns its place when a real person says it worked, and it loses ground when people say it didn't.</p>
+      </div>
+      <div class="split">
+        <div class="points">
+          <div>
+            <h3>Candidate until confirmed</h3>
+            <p>A new fix starts as a candidate. It becomes verified the first time someone else confirms it worked.</p>
+          </div>
+          <div>
+            <h3>One vote per install</h3>
+            <p>Votes are keyed to an anonymous install ID, so confirming the same fix twice counts once. People can change their vote.</p>
+          </div>
+          <div>
+            <h3>Failures don't delete</h3>
+            <p>A fix may fail only in some setups. Reports lower its rank. After 5 or more reports with a 75% failure rate, it goes to moderators for review.</p>
+          </div>
+          <div>
+            <h3>Duplicates merge</h3>
+            <p>The same fix in different words becomes one record. Fixes stay separate when the difference matters, like Windows 10 vs 11 or Node 16 vs 18.</p>
+          </div>
+        </div>
+
+        <div class="rank">
+          <h3>How a fix is ranked</h3>
+          <p class="formula">score = 0.55·relevance + 0.15·verification + 0.20·environment + 0.05·recency − 0.20·failure rate</p>
+          <div class="bar-wrap">
+            <div class="bar" role="img" aria-label="Ranking weights drawn to scale: failure rate minus 0.20, relevance 0.55, verification 0.15, environment 0.20, recency 0.05">
+              <span class="seg fail" style="flex: 20"></span>
+              <span class="zero"></span>
+              <span class="seg rel" style="flex: 55"></span>
+              <span class="seg ver" style="flex: 15"></span>
+              <span class="seg env" style="flex: 20"></span>
+              <span class="seg rec" style="flex: 5"></span>
+            </div>
+            <div class="axis" aria-hidden="true"><span>−0.20</span><span style="left: 17.9%">0</span><span>+0.95</span></div>
+          </div>
+          <ul class="legend">
+            <li><span class="sw seg rel"></span><span class="name">Relevance</span><span class="w">+0.55</span><span class="desc">Meaning match, plus exact error-code overlap.</span></li>
+            <li><span class="sw seg ver"></span><span class="name">Verification</span><span class="w">+0.15</span><span class="desc">Wilson lower bound of the confirmation rate. It saturates, so a thousand votes can't bury a better match.</span></li>
+            <li><span class="sw seg env"></span><span class="name">Environment</span><span class="w">+0.20</span><span class="desc">Software, OS and version, scored only on what you told Claude. A Windows 11 fix outranks a more popular Windows 10 one for a Windows 11 user.</span></li>
+            <li><span class="sw seg rec"></span><span class="name">Recency</span><span class="w">+0.05</span><span class="desc">A light tie-breaker with a 180-day half-life.</span></li>
+            <li><span class="sw seg fail"></span><span class="name">Failure rate</span><span class="w">−0.20</span><span class="desc">Smoothed, so one early failure isn't a verdict.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section flush" id="privacy">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Privacy</p>
+        <h2>FireFinder never stores conversations</h2>
+        <p>The database has no column that could hold a conversation, a name, an email or a user ID. Claude sends only a generalized description of the problem and the fix.</p>
+      </div>
+      <div class="ledger">
+        <div class="kept">
+          <span class="pill ok" style="justify-self: start">Stored</span>
+          <ul>
+            <li>The generalized problem, the fix, and the error text if there is one</li>
+            <li>Software, operating system and version</li>
+            <li>Confirmation and failure counts, with timestamps</li>
+            <li>A keyed hash of an anonymous install ID, one per vote</li>
+          </ul>
+        </div>
+        <div class="never">
+          <span class="pill bad" style="justify-self: start">Never stored</span>
+          <ul>
+            <li>Conversations or chat history</li>
+            <li>Names, emails, usernames or user IDs</li>
+            <li>Passwords, API keys, tokens or private keys</li>
+            <li>IP addresses, raw install IDs or search queries</li>
+          </ul>
+        </div>
+      </div>
+      <p class="filter-note">Every field also passes through a privacy filter before it's saved. It redacts emails, API keys, tokens, passwords, private keys, card numbers, phone numbers, public IP addresses and usernames in file paths. Error codes and version numbers stay, because they're what make a fix findable.</p>
+    </div>
+  </section>
+
+  <section class="section closing">
+    <div class="wrap">
+      <h2>Someone already solved it.</h2>
+      <p>Connect FireFinder once, and Claude will bring you their fix the next time you're stuck.</p>
+      <div class="cta">
+        <a class="btn btn-primary" href="#install">Install FireFinder</a>
+        <a class="btn btn-ghost" href="https://github.com/MichaelCodeToLimit/FireFinder">View on GitHub</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <a class="brand" href="#top">
+      <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M16 3v4M29 16h-4M16 29v-4M3 16h4" stroke="currentColor" stroke-width="2"/><path d="M16 16L8.7 26.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="11" cy="23.5" r="3.4" fill="var(--flare)"/></svg>
+      FireFinder
+    </a>
+    <nav aria-label="Documentation">
+      <a href="https://github.com/MichaelCodeToLimit/FireFinder">GitHub</a>
+      <a href="https://github.com/MichaelCodeToLimit/FireFinder/blob/main/docs/ARCHITECTURE.md">Architecture</a>
+      <a href="https://github.com/MichaelCodeToLimit/FireFinder/blob/main/docs/API.md">API</a>
+      <a href="https://github.com/MichaelCodeToLimit/FireFinder/blob/main/docs/PRIVACY.md">Privacy model</a>
+      <a href="https://github.com/MichaelCodeToLimit/FireFinder/blob/main/SECURITY.md">Security</a>
+      <a href="https://github.com/MichaelCodeToLimit/FireFinder/blob/main/LICENSE">MIT License</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const NS = "http://www.w3.org/2000/svg";
+  const C = 220;
+  const el = (name, attrs, parent) => {
+    const node = document.createElementNS(NS, name);
+    for (const key in attrs) node.setAttribute(key, attrs[key]);
+    parent.appendChild(node);
+    return node;
+  };
+  const at = (deg, r) => {
+    const a = deg * Math.PI / 180;
+    return [+(C + r * Math.sin(a)).toFixed(2), +(C - r * Math.cos(a)).toFixed(2)];
+  };
+
+  // Azimuth ring: a tick every 2°, longer every 10°, labelled every 30°.
+  const ticks = document.getElementById("ticks");
+  for (let d = 0; d < 360; d += 2) {
+    const len = d % 30 === 0 ? 14 : d % 10 === 0 ? 9 : 5;
+    const [x1, y1] = at(d, 204);
+    const [x2, y2] = at(d, 204 - len);
+    el("line", { x1, y1, x2, y2, class: d % 10 === 0 ? "tick major" : "tick" }, ticks);
+    if (d % 30 === 0) {
+      const [x, y] = at(d, 178);
+      el("text", { x, y, class: "deg" }, ticks).textContent = String(d).padStart(3, "0");
+    }
+  }
+
+  // Contour map: nested, never-crossing rings around one summit; every fourth is an index contour.
+  const contours = document.getElementById("contours");
+  const [hx, hy] = [256, 190];
+  for (let k = 1; k <= 10; k++) {
+    const base = 15 * k;
+    let d = "";
+    for (let i = 0; i <= 180; i++) {
+      const t = i / 180 * Math.PI * 2;
+      const r = base * (1 + .16 * Math.sin(2 * t + .6 + k * .12) + .09 * Math.sin(3 * t + 2.1 - k * .08) + .05 * Math.sin(5 * t + .3));
+      d += (i ? "L" : "M") + (hx + r * Math.cos(t) * 1.08).toFixed(1) + " " + (hy + r * Math.sin(t) * .92).toFixed(1);
+    }
+    el("path", { d: d + "Z", class: k % 4 === 0 ? "contour index" : "contour" }, contours);
+  }
+
+  // Swing the sight onto the fire once, then light it.
+  const sight = document.getElementById("sight");
+  const fire = document.getElementById("fire");
+  const bearing = document.getElementById("bearing");
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const target = 214, duration = 1900;
+    const ease = t => 1 - Math.pow(1 - t, 3);
+    let start;
+    fire.classList.add("unlit");
+    const frame = now => {
+      start ??= now;
+      const t = Math.min((now - start) / duration, 1);
+      const deg = target * ease(t);
+      sight.setAttribute("transform", `rotate(${deg.toFixed(2)} ${C} ${C})`);
+      bearing.textContent = String(Math.round(deg)).padStart(3, "0") + "°";
+      if (t < 1) requestAnimationFrame(frame);
+      else fire.classList.remove("unlit");
+    };
+    requestAnimationFrame(frame);
+  }
+
+  // Install tabs, deep-linkable as #install-apps, #install-code, #install-self.
+  const tabs = [...document.querySelectorAll('[role="tab"]')];
+  const select = (tab, focus) => {
+    for (const t of tabs) {
+      const on = t === tab;
+      t.setAttribute("aria-selected", String(on));
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
+    }
+    if (focus) tab.focus();
+  };
+  tabs.forEach((tab, i) => {
+    tab.addEventListener("click", () => {
+      select(tab);
+      history.replaceState(null, "", "#" + tab.getAttribute("aria-controls"));
+    });
+    tab.addEventListener("keydown", e => {
+      const step = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+      if (!step) return;
+      e.preventDefault();
+      select(tabs[(i + step + tabs.length) % tabs.length], true);
+    });
+  });
+  const fromHash = onLoad => {
+    const tab = tabs.find(t => "#" + t.getAttribute("aria-controls") === location.hash);
+    if (!tab) return false;
+    select(tab);
+    // On load, jump instantly and again once web fonts settle the layout.
+    const go = () => document.getElementById("install").scrollIntoView({ behavior: onLoad ? "instant" : "smooth" });
+    go();
+    if (onLoad && document.fonts) document.fonts.ready.then(go);
+    return true;
+  };
+  if (!fromHash(true)) select(tabs[0]);
+  addEventListener("hashchange", () => fromHash(false));
+
+  // Copy buttons.
+  for (const block of document.querySelectorAll(".code")) {
+    const button = block.querySelector("button");
+    const code = block.querySelector("code");
+    let timer;
+    const show = (label, done) => {
+      button.textContent = label;
+      button.classList.toggle("done", done);
+      clearTimeout(timer);
+      timer = setTimeout(() => { button.textContent = "Copy"; button.classList.remove("done"); }, 1800);
+    };
+    button.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(code.textContent.trim());
+        show("Copied", true);
+      } catch {
+        const range = document.createRange();
+        range.selectNodeContents(code);
+        const selection = getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        show("Selected", false);
+      }
+    });
+  }
+})();
+</script>
+</body>
+</html>
