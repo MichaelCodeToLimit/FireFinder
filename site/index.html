@@ -10,7 +10,9 @@
 <meta property="og:description" content="When you're stuck in the fire, find the way out. A shared memory of verified fixes for Claude. No account, no API key.">
 <meta name="theme-color" content="#eff3ee" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0e1512" media="(prefers-color-scheme: dark)">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cstyle%3E.i%7Bstroke:%2314201a%7D@media (prefers-color-scheme:dark)%7B.i%7Bstroke:%23e6ede8%7D%7D%3C/style%3E%3Ccircle class='i' cx='16' cy='16' r='13' fill='none' stroke-width='2.5'/%3E%3Cpath class='i' d='M16 3v4M29 16h-4M16 29v-4M3 16h4' stroke-width='2'/%3E%3Cpath class='i' d='M16 16L8.7 26.8' stroke-width='1.5' stroke-linecap='round'/%3E%3Ccircle cx='11' cy='23.5' r='3.4' fill='%23e0520e'/%3E%3C/svg%3E">
+<link rel="icon" href="brand/png/firefinder-icon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="brand/firefinder-icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="brand/png/firefinder-icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:ital,wght@0,400..700;1,400&display=swap">
@@ -156,7 +158,7 @@ h3 { font-family: var(--display); font-stretch: 104%; font-weight: 700; font-siz
   font-size: 18px;
   letter-spacing: .01em;
 }
-.mark { width: 28px; height: 28px; flex: none; color: var(--ink); }
+.mark { width: 25px; height: 32px; flex: none; color: var(--ink); }
 .nav { display: flex; align-items: center; gap: 24px; font-size: 15px; }
 .nav a:not(.btn) { color: var(--ink-2); text-decoration: none; }
 .nav a:not(.btn):hover { color: var(--ink); }
@@ -541,7 +543,7 @@ td.result { white-space: nowrap; }
 footer { border-top: 1px solid var(--rule); padding-block: 28px calc(28px + env(safe-area-inset-bottom, 0px)); font-size: 14.5px; color: var(--muted); }
 footer .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 32px; }
 footer .brand { font-size: 15px; }
-footer .mark { width: 22px; height: 22px; }
+footer .mark { width: 21px; height: 27px; }
 footer nav { display: flex; flex-wrap: wrap; gap: 8px 20px; }
 footer a { color: var(--ink-2); text-decoration: none; }
 footer a:hover { color: var(--ink); text-decoration: underline; }
@@ -558,7 +560,7 @@ footer a:hover { color: var(--ink); text-decoration: underline; }
 <header class="top">
   <div class="wrap">
     <a class="brand" href="#top" aria-label="FireFinder home">
-      <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M16 3v4M29 16h-4M16 29v-4M3 16h4" stroke="currentColor" stroke-width="2"/><path d="M16 16L8.7 26.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="11" cy="23.5" r="3.4" fill="var(--flare)"/></svg>
+      <svg class="mark" viewBox="8 1.5 48 61" aria-hidden="true"><defs><path id="ff-flame" d="M33.44 15.04C34.72 22.08 41.76 25.92 42.4 34.88C43.04 43.2 37.92 48.96 32.16 48.96C26.4 48.96 21.28 44.48 21.6 37.44C21.92 32.32 24.48 29.12 27.36 25.92C27.36 29.76 28.64 32.32 30.88 33.28C29.92 26.56 30.88 20.16 33.44 15.04Z"/><mask id="ff-rings" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><g fill="none" stroke-linejoin="round"><use href="#ff-flame" stroke="#fff" stroke-width="26"/><use href="#ff-flame" stroke="#000" stroke-width="20"/><use href="#ff-flame" stroke="#fff" stroke-width="13"/><use href="#ff-flame" stroke="#000" stroke-width="7"/></g><use href="#ff-flame" fill="#000"/></mask></defs><rect width="64" height="64" fill="currentColor" mask="url(#ff-rings)"/><use href="#ff-flame" fill="var(--flare)"/></svg>
       FireFinder
     </a>
     <nav class="nav" aria-label="Main">
@@ -902,7 +904,7 @@ footer a:hover { color: var(--ink); text-decoration: underline; }
 <footer>
   <div class="wrap">
     <a class="brand" href="#top">
-      <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M16 3v4M29 16h-4M16 29v-4M3 16h4" stroke="currentColor" stroke-width="2"/><path d="M16 16L8.7 26.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="11" cy="23.5" r="3.4" fill="var(--flare)"/></svg>
+      <svg class="mark" viewBox="8 1.5 48 61" aria-hidden="true"><rect width="64" height="64" fill="currentColor" mask="url(#ff-rings)"/><use href="#ff-flame" fill="var(--flare)"/></svg>
       FireFinder
     </a>
     <nav aria-label="Documentation">
