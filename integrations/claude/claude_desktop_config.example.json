@@ -2,7 +2,7 @@
   "mcpServers": {
     "firefinder": {
       "command": "node",
-      "args": ["C:/absolute/path/to/Firefinder/packages/mcp/dist/firefinder-mcp.js"],
+      "args": ["/absolute/path/to/FireFinder/packages/mcp/dist/firefinder-mcp.js"],
       "env": {
         "FIREFINDER_API_URL": "http://localhost:8787",
         "FIREFINDER_API_KEY": "ff_replace_with_your_key"

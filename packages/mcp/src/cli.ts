@@ -20,11 +20,11 @@ if (!apiKey) {
   process.exit(1);
 }
 
-const baseUrl = process.env.FIREFINDER_API_URL ?? 'http://localhost:8787';
+const baseUrl = process.env.FIREFINDER_API_URL || 'http://localhost:8787';
 const client = new FireFinderClient({
   baseUrl,
   apiKey,
-  clientId: process.env.FIREFINDER_CLIENT_ID ?? loadOrCreateClientId(),
+  clientId: process.env.FIREFINDER_CLIENT_ID || loadOrCreateClientId(),
   region: process.env.FIREFINDER_API_REGION || undefined,
   userAgent: `firefinder-mcp/${MCP_SERVER_VERSION}`,
 });

@@ -4,6 +4,14 @@
   "private": true,
   "description": "Shared memory of verified solutions for AI assistants. When you're stuck in the fire, find the way out.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MichaelCodeToLimit/FireFinder.git"
+  },
+  "homepage": "https://github.com/MichaelCodeToLimit/FireFinder#readme",
+  "bugs": {
+    "url": "https://github.com/MichaelCodeToLimit/FireFinder/issues"
+  },
   "type": "module",
   "engines": {
     "node": ">=22.18.0"

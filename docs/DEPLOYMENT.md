@@ -53,9 +53,9 @@ Generate the value with `openssl rand -hex 32`, or with `node -e "console.log(re
 npm run deploy:edge
 ```
 
-This bundles `apps/edge/src/main.ts` into `supabase/functions/firefinder/index.js` (~155 KB). It then runs `supabase functions deploy firefinder --use-api`, which bundles server-side, so no Docker is needed.
+This bundles `apps/edge/src/main.ts` into `supabase/functions/firefinder/index.js` (~470 KB, gitignored). It then runs `supabase functions deploy firefinder --use-api`, which bundles server-side, so no Docker is needed.
 
-`supabase/config.toml` sets `verify_jwt = false` for this function because FireFinder authenticates with its own API keys; every endpoint except `/health` requires one.
+`supabase/config.toml` sets `verify_jwt = false` for this function because FireFinder authenticates callers itself. The REST API needs FireFinder API keys (except `/health`), and `/mcp` needs FireFinder's own OAuth tokens. OAuth metadata and registration are public, as the MCP spec requires.
 
 ### 5. Create API keys
 
@@ -73,12 +73,9 @@ Use `--scopes read,write` (the default) for integrations and `--scopes admin` fo
 FIREFINDER_API_URL=https://<project-ref>.supabase.co/functions/v1/firefinder FIREFINDER_API_KEY=ff_… npm run smoke
 ```
 
-Add `-- --write` to exercise submit, confirm and report as well. Set `FIREFINDER_ADMIN_KEY` too, so the test record is disabled afterwards.
+Add `-- --write` to exercise submit, confirm and report as well. Against a deployed API this requires `FIREFINDER_ADMIN_KEY`, so the test record is disabled afterwards and never stays in the database.
 
-Then point Claude's MCP config at:
-
-- `FIREFINDER_API_URL=https://<project-ref>.supabase.co/functions/v1/firefinder`
-- `FIREFINDER_API_REGION=<your database region>`
+Then connect Claude to the remote MCP endpoint (next section). Only the local stdio server uses the API URL and key directly: `FIREFINDER_API_URL=https://<project-ref>.supabase.co/functions/v1/firefinder` and `FIREFINDER_API_REGION=<your database region>`.
 
 ### Remote MCP (claude.ai, Claude mobile, Claude Code)
 

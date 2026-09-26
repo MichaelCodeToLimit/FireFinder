@@ -52,7 +52,7 @@ Unicode NFKC normalization. Control, zero-width and bidi-override characters are
 | `ssn` | `123-45-6789` → `[REDACTED_SSN]` |
 | `phone` | `(555) 123-4567`, `+44 20 7946 0958` → `[REDACTED_PHONE]` |
 | `ip_address` | public IPv4 → `[REDACTED_IP]` (private ranges and version strings are kept) |
-| `username_in_path` | `C:\Users\michael\…`, `/Users/jane/…`, `/home/bob/…` → `<user>` |
+| `username_in_path` | `C:\Users\jsmith\…`, `/Users/jane/…`, `/home/bob/…` → `<user>` |
 
 The filter deliberately **keeps** detail that helps match problems: error codes (`0x80070005`, `ERR_…`), versions, GUIDs, private IPs, `localhost` URLs and config variable names (`NODE_OPTIONS=…`). Each redaction kind is covered by tests in both directions: what gets redacted, and what is left alone.
 

@@ -2,7 +2,7 @@
 
 ## Reporting a vulnerability
 
-Please **do not open a public issue** for security problems. Report them privately through **GitHub → Security → "Report a vulnerability"** (private security advisory) on this repository. Include:
+Please **do not open a public issue** for security problems. Report them privately through **GitHub → Security → "Report a vulnerability"** (private security advisory) on this repository. If that option isn't available, open an issue that only asks for a private contact, without any details. Include:
 
 - what you found and where (file, endpoint, commit),
 - how to reproduce it,
@@ -32,7 +32,7 @@ FireFinder is pre-1.0. Security fixes land on `main` and in the latest release.
 | Privacy filter | Secrets and personal data are redacted before storage (see [docs/PRIVACY.md](docs/PRIVACY.md)). |
 | SQL | Parameterized statements only. Arrays are passed as JSON and unpacked in SQL. |
 | Database | FireFinder has its own schema (`firefinder`), which Supabase's auto-generated REST API doesn't expose. RLS is enabled on every table with **no policies**. `anon` and `authenticated` get no privileges on the schema, tables or functions, and `EXECUTE` is revoked from `PUBLIC`. Every function has `search_path = ''`. CHECK constraints mirror API validation. |
-| Secrets | Only environment variables / Supabase secrets are used; nothing is hard-coded. The Supabase service-role key is **not used** by FireFinder. Never put it in an MCP config or a client. |
+| Secrets | Only environment variables / Supabase secrets are used; nothing is hard-coded. `.env`, `.data/` (local database and dev key) and build output are gitignored, and `.env.example` contains names only. The Supabase service-role key is **not used** by FireFinder. Never put it in an MCP config or a client. The Claude Code plugin contains only the public server URL. |
 | HTTP | Hono `secureHeaders` on every response. CORS is off unless `CORS_ORIGINS` is set. The developer console uses a strict CSP (`script-src 'self'`, no inline scripts) and renders all data with `textContent`. |
 | Logging | Structured logs with method, path and error only. Request bodies and search queries are never logged. |
 
@@ -55,7 +55,6 @@ The `/mcp` endpoint is public, so it's protected differently from the API-key RE
 ## Known limitations (MVP)
 
 - **Remote MCP identities are per connection.** Reconnecting yields a new identity that can vote again; the per-IP minting limits bound this. Revoking an identity (`oauth_grants.revoked_at`) takes effect at its next token refresh, within an hour.
-
 - **Vote integrity with shared keys.** One vote per install relies on the random install ID the client sends. A malicious client holding a valid key can rotate install IDs to vote repeatedly; per-IP rate limits slow this down but don't prevent it. Mitigations are planned: per-user keys, and signed or anonymous attestations.
 - **Redaction is best-effort.** Pattern-based filtering catches common secrets and personal data. It cannot recognize every name or proprietary detail in free text, so the Claude integration is also instructed to generalize and strip personal details before submitting.
 - **In-memory rate limits are per process.** Behind a load balancer with several Node instances, use a shared limiter (the Postgres-backed `StoreRateLimiter`, or a Redis implementation of `RateLimiter`).

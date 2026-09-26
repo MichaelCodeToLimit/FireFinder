@@ -2,7 +2,11 @@
  * End-to-end check of a deployed remote MCP endpoint, connecting exactly like
  * claude.ai: discovery -> dynamic client registration -> OAuth (PKCE) -> MCP.
  * Two anonymous users then run the FireFinder chain reaction on a clearly
- * labelled test record, which is disabled afterwards (needs FIREFINDER_ADMIN_KEY).
+ * labelled test record, which is disabled afterwards.
+ *
+ * Against a deployed server the write path only runs with FIREFINDER_ADMIN_KEY
+ * (so the test record never stays in a shared database); without it the check
+ * is read-only: OAuth, tool list and a search that must miss.
  *
  *   FIREFINDER_MCP_URL=https://<ref>.supabase.co/functions/v1/firefinder/mcp npm run smoke:mcp
  */
@@ -12,7 +16,7 @@ import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/
 import type { OAuthClientInformationMixed, OAuthClientMetadata, OAuthTokens } from '@modelcontextprotocol/sdk/shared/auth.js';
 
 const mcpUrl =
-  process.env.FIREFINDER_MCP_URL ?? (process.env.FIREFINDER_API_URL ? `${process.env.FIREFINDER_API_URL.replace(/\/+$/, '')}/mcp` : '');
+  process.env.FIREFINDER_MCP_URL || (process.env.FIREFINDER_API_URL ? `${process.env.FIREFINDER_API_URL.replace(/\/+$/, '')}/mcp` : '');
 if (!mcpUrl) {
   console.error('Set FIREFINDER_MCP_URL (e.g. https://<ref>.supabase.co/functions/v1/firefinder/mcp).');
   process.exit(1);
@@ -94,8 +98,10 @@ async function connectClaude(name: string) {
 
 const run = Date.now().toString(36).toUpperCase();
 const errorCode = `FFSMOKE_${run}`;
+const adminKey = process.env.FIREFINDER_ADMIN_KEY;
+const writes = Boolean(adminKey) || /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?\//.test(mcpUrl);
 const userA = await connectClaude('user A');
-const userB = await connectClaude('user B');
+const userB = writes ? await connectClaude('user B') : undefined;
 let fireId: string | undefined;
 
 try {
@@ -109,30 +115,31 @@ try {
   if (!nothing.includes('do not mention FireFinder')) throw new Error(`expected an invisible miss, got: ${nothing}`);
   console.log('  user A: no match -> FireFinder stays invisible');
 
-  const saved = await userA.call('submit_solution', {
-    problem: `[smoke test ${run}] Smoke-test app fails to start with error ${errorCode}`,
-    solution: 'Delete the smoke-test cache folder and start the app again. (Test record; it is disabled automatically.)',
-    error_message: errorCode,
-    user_evidence: 'That fixed it!',
-  });
-  fireId = saved.match(/id: ([0-9a-f-]{36})/)?.[1];
-  console.log(`  user A: "That fixed it!" -> ${saved.split('\n')[0]}`);
+  if (userB) {
+    const saved = await userA.call('submit_solution', {
+      problem: `[smoke test ${run}] Smoke-test app fails to start with error ${errorCode}`,
+      solution: 'Delete the smoke-test cache folder and start the app again. (Test record; it is disabled automatically.)',
+      error_message: errorCode,
+      user_evidence: 'That fixed it!',
+    });
+    fireId = saved.match(/id: ([0-9a-f-]{36})/)?.[1];
+    console.log(`  user A: "That fixed it!" -> ${saved.split('\n')[0]}`);
 
-  const found = await userB.call('search_firefinder', {
-    problem: `My smoke-test app keeps failing at startup with ${errorCode}`,
-    error_message: errorCode,
-  });
-  if (!fireId || !found.includes(fireId)) throw new Error(`user B did not receive user A's fix:\n${found}`);
-  console.log(`  user B: ${found.split('\n')[0]}`);
+    const found = await userB.call('search_firefinder', {
+      problem: `My smoke-test app keeps failing at startup with ${errorCode}`,
+      error_message: errorCode,
+    });
+    if (!fireId || !found.includes(fireId)) throw new Error(`user B did not receive user A's fix:\n${found}`);
+    console.log(`  user B: ${found.split('\n')[0]}`);
 
-  const confirmed = await userB.call('confirm_solution', { id: fireId, user_evidence: "It's working now" });
-  if (!confirmed.includes('confirmed by 2')) throw new Error(`expected 2 confirmations: ${confirmed}`);
-  console.log(`  user B: "It's working now" -> ${confirmed.split('. Now: ')[1]?.split('. No need')[0]}`);
+    const confirmed = await userB.call('confirm_solution', { id: fireId, user_evidence: "It's working now" });
+    if (!confirmed.includes('confirmed by 2')) throw new Error(`expected 2 confirmations: ${confirmed}`);
+    console.log(`  user B: "It's working now" -> ${confirmed.split('. Now: ')[1]?.split('. No need')[0]}`);
+  }
 } finally {
   await userA.client.close();
-  await userB.client.close();
+  await userB?.client.close();
   if (fireId) {
-    const adminKey = process.env.FIREFINDER_ADMIN_KEY;
     const base = mcpUrl.replace(/\/mcp$/, '');
     if (adminKey) {
       const res = await fetch(`${base}/admin/solutions/${fireId}/status`, {
@@ -141,10 +148,15 @@ try {
         body: JSON.stringify({ status: 'disabled' }),
       });
       console.log(res.ok ? '✓ test record disabled' : `! could not disable test record (HTTP ${res.status})`);
+      if (!res.ok) process.exitCode = 1;
     } else {
       console.log(`  (set FIREFINDER_ADMIN_KEY to disable the test record automatically; id ${fireId})`);
     }
   }
 }
 
-console.log('\n🔥 Remote MCP chain reaction verified: Claude -> remote MCP -> FireFinder -> semantic search -> verified solution.');
+console.log(
+  userB
+    ? '\n🔥 Remote MCP chain reaction verified: Claude -> remote MCP -> FireFinder -> semantic search -> verified solution.'
+    : '\n🔥 Remote MCP verified read-only (OAuth, tools, invisible miss). Set FIREFINDER_ADMIN_KEY to also run the write path; its test record is disabled afterwards.',
+);

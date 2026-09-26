@@ -3,17 +3,22 @@
  *
  *   FIREFINDER_API_URL=... FIREFINDER_API_KEY=... npm run smoke
  *   npm run smoke -- --write     also submit, confirm and report a clearly
- *                                labelled test record (disabled afterwards
- *                                when FIREFINDER_ADMIN_KEY is set)
+ *                                labelled test record, disabled afterwards
+ *                                (a deployed API needs FIREFINDER_ADMIN_KEY)
  */
 import { parseArgs } from 'node:util';
 import { FireFinderClient } from '@firefinder/client';
 
 const { values } = parseArgs({ options: { write: { type: 'boolean', default: false } } });
-const baseUrl = process.env.FIREFINDER_API_URL ?? 'http://localhost:8787';
+const baseUrl = process.env.FIREFINDER_API_URL || 'http://localhost:8787';
 const apiKey = process.env.FIREFINDER_API_KEY;
 if (!apiKey) {
   console.error('Set FIREFINDER_API_KEY (and FIREFINDER_API_URL for a deployed API).');
+  process.exit(1);
+}
+const isLocal = /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?(\/|$)/.test(baseUrl);
+if (values.write && !isLocal && !process.env.FIREFINDER_ADMIN_KEY) {
+  console.error('--write against a deployed API needs FIREFINDER_ADMIN_KEY, so the test record is disabled and never stays in a shared database.');
   process.exit(1);
 }
 
@@ -60,6 +65,7 @@ if (values.write) {
       body: JSON.stringify({ status: 'disabled' }),
     });
     console.log(res.ok ? '✓ test record disabled' : `! could not disable test record (HTTP ${res.status})`);
+    if (!res.ok) process.exitCode = 1;
   } else {
     console.log(`  (set FIREFINDER_ADMIN_KEY to disable test records automatically; id ${id})`);
   }

@@ -37,7 +37,7 @@ describe('redactSensitive', () => {
     ['ssn', 'SSN 123-45-6789 in the form', '[REDACTED_SSN]'],
     ['phone', 'call me at (555) 123-4567', '[REDACTED_PHONE]'],
     ['public ip', 'cannot reach 203.0.113.42 from home', '[REDACTED_IP]'],
-    ['windows user path', 'File C:\\Users\\michael\\AppData\\Roaming\\app.log', 'C:\\Users\\<user>\\AppData'],
+    ['windows user path', 'File C:\\Users\\jsmith\\AppData\\Roaming\\app.log', 'C:\\Users\\<user>\\AppData'],
     ['mac user path', 'at /Users/jane/Library/Logs/app.log', '/Users/<user>/Library'],
     ['linux user path', 'see /home/bob/.config/app.toml', '/home/<user>/.config'],
     ['generic secret', 'webhook secret whsec9f8A7b6C5d4E3f2A1b0C9d8E7f6A5b4C3d', '[REDACTED_SECRET]'],

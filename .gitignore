@@ -1,7 +1,11 @@
 node_modules/
+
+# Secrets: local configuration and key material. Only .env.example is committed.
 .env
 .env.*
 !.env.example
+*.pem
+*.key
 
 # Local data: PGlite database, generated dev key and voter secret, model cache
 .data/
@@ -10,6 +14,7 @@ node_modules/
 # Build output
 packages/*/dist/
 supabase/functions/firefinder/index.js
+*.tsbuildinfo
 
 # Supabase CLI local state
 supabase/.temp/
@@ -20,7 +25,9 @@ supabase/.branches/
 Thumbs.db
 coverage/
 
-# Local Claude Code launch config
+# Editors and local Claude Code settings
+.vscode/
+.idea/
 .claude/
 
 # Plugin eval results

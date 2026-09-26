@@ -13,7 +13,7 @@ describe('privacy filtering on submission', () => {
     const res = await ctx.request('POST', '/solutions', {
       clientId: 'privacy-client-1',
       body: {
-        problem: 'App at C:\\Users\\michael\\AppData\\Local\\MyApp fails to log in; support said email jane.doe@example.com',
+        problem: 'App at C:\\Users\\jsmith\\AppData\\Local\\MyApp fails to log in; support said email jane.doe@example.com',
         solution: 'Regenerate the token and set API_KEY=sk-proj-AbCdEfGhIjKlMnOpQrStUvWxYz123456 in the .env file, then restart.',
         error_message: 'POST https://admin:hunter2@api.example.com/login -> 401',
         software: 'MyApp',
@@ -31,7 +31,7 @@ describe('privacy filtering on submission', () => {
       [res.body.solution.id],
     );
     const stored = JSON.stringify(row);
-    for (const secret of ['michael', 'jane.doe@example.com', 'sk-proj-AbCdEfGhIjKlMnOpQrStUvWxYz123456', 'hunter2']) {
+    for (const secret of ['jsmith', 'jane.doe@example.com', 'sk-proj-AbCdEfGhIjKlMnOpQrStUvWxYz123456', 'hunter2']) {
       expect(stored).not.toContain(secret);
     }
   });

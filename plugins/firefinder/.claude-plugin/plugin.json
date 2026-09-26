@@ -7,5 +7,7 @@
     "name": "FireFinder contributors"
   },
   "license": "MIT",
+  "homepage": "https://github.com/MichaelCodeToLimit/FireFinder",
+  "repository": "https://github.com/MichaelCodeToLimit/FireFinder",
   "keywords": ["troubleshooting", "errors", "debugging", "shared-memory", "verified-fixes"]
 }

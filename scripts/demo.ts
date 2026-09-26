@@ -10,9 +10,9 @@ import { existsSync, readFileSync } from 'node:fs';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 
-const apiUrl = process.env.FIREFINDER_API_URL ?? 'http://localhost:8787';
+const apiUrl = process.env.FIREFINDER_API_URL || 'http://localhost:8787';
 const apiKey =
-  process.env.FIREFINDER_API_KEY ?? (existsSync('.data/dev-api-key') ? readFileSync('.data/dev-api-key', 'utf8').trim() : '');
+  process.env.FIREFINDER_API_KEY || (existsSync('.data/dev-api-key') ? readFileSync('.data/dev-api-key', 'utf8').trim() : '');
 if (!apiKey) {
   console.error('Set FIREFINDER_API_KEY, or start the local server once (npm run dev) to create .data/dev-api-key.');
   process.exit(1);

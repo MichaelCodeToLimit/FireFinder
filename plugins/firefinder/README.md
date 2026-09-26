@@ -12,18 +12,35 @@ It never saves conversations. It never records anything unless your own words sa
 
 ## Install
 
+In Claude Code:
+
 ```text
-/plugin marketplace add <path-or-github-repo-of-firefinder>
+/plugin marketplace add https://github.com/MichaelCodeToLimit/FireFinder.git
+```
+
+```text
 /plugin install firefinder@firefinder
 ```
 
+Or from a terminal:
+
+```bash
+claude plugin marketplace add https://github.com/MichaelCodeToLimit/FireFinder.git
+```
+
+```bash
+claude plugin install firefinder@firefinder
+```
+
 Then connect it once. Run `/mcp`, select **firefinder**, and choose **Authenticate**. A browser tab opens and returns immediately, because there is no login; FireFinder gives this install an anonymous identity. That's it.
+
+To update later, run `/plugin marketplace update firefinder`. Working on FireFinder itself? Add your local checkout instead: `/plugin marketplace add ./path/to/FireFinder`.
 
 ## What's inside
 
 | Component | Purpose |
 |---|---|
-| `.mcp.json` | The FireFinder remote MCP server (Streamable HTTP + OAuth), hosted on Supabase |
+| `.mcp.json` | The public FireFinder remote MCP server (Streamable HTTP + OAuth), hosted on Supabase. No keys or secrets |
 | `skills/firefinder/SKILL.md` | When to search, how to use results, when to record outcomes (generated from the MCP server's instructions) |
 | `evals/` | Behavior tests for `claude plugin eval`, with the FireFinder server mocked |
 

@@ -94,7 +94,7 @@ The hosted instance runs on the Supabase project from [DEPLOYMENT.md](DEPLOYMENT
    ```bash
    npm run deploy:edge
    ```
-4. **Verify from your machine**, the same way claude.ai connects:
+4. **Verify from your machine**, the same way claude.ai connects. With the admin key it runs the full chain reaction and disables its test record afterwards; without it, against a deployed server, the check is read-only:
    ```bash
    FIREFINDER_MCP_URL=https://<ref>.supabase.co/functions/v1/firefinder/mcp FIREFINDER_ADMIN_KEY=ff_… npm run smoke:mcp
    ```
@@ -133,9 +133,9 @@ The `x-firefinder-region` response header shows which region handled a request.
 ### claude.ai, Claude Desktop, Claude mobile (one connector for all)
 
 1. Open **Customize → Connectors**, click **+**, then **Add custom connector**. On Team and Enterprise plans, an owner first adds it under **Organization settings → Connectors → Add → Custom → Web**.
-2. Name: `FireFinder`. URL: `https://<ref>.supabase.co/functions/v1/firefinder/mcp`. Leave the advanced OAuth fields empty.
-3. Click **Connect**. A window opens and closes almost immediately (there is no login).
-4. The first time Claude uses a FireFinder tool, choose **Allow always** so it can keep working without asking.
+2. Name: `FireFinder`. URL: `https://<ref>.supabase.co/functions/v1/firefinder/mcp` (the public instance: `https://wmrkcgivrurnycfqjznp.supabase.co/functions/v1/firefinder/mcp`). Leave the OAuth fields under **Advanced settings** empty.
+3. Click **Add**, then **Connect**. A window opens and closes almost immediately (there is no login).
+4. If Claude asks for permission the first time it uses a FireFinder tool, allow it always, so it can keep working without asking.
 
 The connector syncs to Claude Desktop and the mobile apps. It's enabled for new chats; you can toggle it under **+ → Connectors** in a chat. Free plans allow one custom connector.
 
@@ -144,11 +144,14 @@ The connector syncs to Claude Desktop and the mobile apps. It's enabled for new 
 Install the plugin, which bundles the remote server and the FireFinder skill:
 
 ```text
-/plugin marketplace add <path-or-github-repo-of-firefinder>
+/plugin marketplace add https://github.com/MichaelCodeToLimit/FireFinder.git
+```
+
+```text
 /plugin install firefinder@firefinder
 ```
 
-Then run `/mcp`, choose **firefinder → Authenticate** once.
+Then run `/mcp`, choose **firefinder → Authenticate** once. The plugin's `.mcp.json` points at the public instance; for your own deployment, change its URL in a fork or use `claude mcp add` below.
 
 Or, without the plugin:
 
