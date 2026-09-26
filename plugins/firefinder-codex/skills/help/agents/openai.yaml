@@ -1,0 +1,5 @@
+interface:
+  display_name: "FireFinder: help"
+  short_description: "What FireFinder is, what it saves, and how to use it"
+policy:
+  allow_implicit_invocation: false

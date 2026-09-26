@@ -1,0 +1,5 @@
+interface:
+  display_name: "FireFinder: it worked"
+  short_description: "Save the fix that just worked, or confirm a FireFinder fix"
+policy:
+  allow_implicit_invocation: false

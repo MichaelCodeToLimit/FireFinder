@@ -62,7 +62,7 @@ Claude decides when a problem is relevant (technical or everyday), searches, and
 
 ## Contents
 
-- [Install](#install): claude.ai · Claude Desktop and mobile · Claude Code
+- [Install](#install): claude.ai · Claude Desktop and mobile · Claude Code · Codex · ChatGPT
 - [What runs where](#what-runs-where)
 - [Local development](#local-development)
 - [Architecture](#architecture)
@@ -105,7 +105,7 @@ You don't need a `claude_desktop_config.json` entry for the hosted server. That 
 
 ### C. Claude Code
 
-Install the plugin from this repository. It bundles the remote server and a skill with the zero-touch guidance.
+Install the plugin from this repository. It bundles the remote server, a skill with the zero-touch guidance, a hook that has Claude check FireFinder when an install, build or deploy command it runs fails, and two commands: `/firefinder:search` and `/firefinder:fire`.
 
 ```text
 /plugin marketplace add https://github.com/MichaelCodeToLimit/FireFinder.git
@@ -118,6 +118,25 @@ Install the plugin from this repository. It bundles the remote server and a skil
 Then run `/mcp`, select **firefinder**, and choose **Authenticate** (once). A browser tab opens and returns immediately.
 
 The same works from a terminal with `claude plugin marketplace add …` and `claude plugin install firefinder@firefinder`. Without the plugin, you can add just the server: `claude mcp add --transport http firefinder <server URL>`. Details: [plugins/firefinder](plugins/firefinder).
+
+### D. Codex
+
+One plugin serves Codex and ChatGPT. It bundles the remote server, the same zero-touch skill, and `search`, `fire`, `worked`, `failed` and `help` skills you can invoke yourself.
+
+```bash
+codex plugin marketplace add MichaelCodeToLimit/FireFinder
+```
+
+```bash
+codex plugin add firefinder@firefinder
+```
+
+Then sign in once with `codex mcp login firefinder`. The browser tab returns immediately. Details: [plugins/firefinder-codex](plugins/firefinder-codex).
+
+### E. ChatGPT
+
+- **Desktop app:** add the marketplace with the `codex plugin marketplace add` command above, restart the app, and install **FireFinder** from **Plugins**.
+- **Web:** turn on **Developer mode** (Settings → Security and login), then at [chatgpt.com/plugins](https://chatgpt.com/plugins) select **+** and enter the server URL with OAuth, leaving the client ID and secret empty.
 
 ### What Claude gets
 
@@ -139,7 +158,8 @@ The write tools require `user_evidence`, the user's own words, which the server 
 |---|---|---|
 | **The deployed FireFinder MCP server** | The public endpoint above: remote MCP (`/mcp`, Streamable HTTP + OAuth 2.1) and the REST API. Source: `apps/edge` + `packages/*`. | Users connect to it once; operators deploy it |
 | **Supabase** | Hosts the deployed server as an Edge Function, plus its database (PostgreSQL + pgvector, schema in `supabase/migrations`). All secrets live there as function secrets. | Operators only. Users never need a Supabase account |
-| **The Claude Code plugin** | `plugins/firefinder` + `.claude-plugin/marketplace.json`: points Claude Code at the deployed server (`.mcp.json`) and adds the zero-touch skill. It contains no code and no secrets. | Claude Code users install it |
+| **The Claude Code plugin** | `plugins/firefinder` + `.claude-plugin/marketplace.json`: points Claude Code at the deployed server (`.mcp.json`) and adds the zero-touch skill, a failed-command hook and two slash commands. It contains no code and no secrets. | Claude Code users install it |
+| **The Codex and ChatGPT plugin** | `plugins/firefinder-codex` + `.agents/plugins/marketplace.json`: the same server and zero-touch skill, plus five by-hand skills. No code and no secrets. | Codex and ChatGPT users install it |
 | **Local development** | `npm run dev`: the same API and MCP server on `localhost`, with an embedded database in `.data/`. It never touches the deployed database. | Contributors |
 
 The deployed server and a local server run the same code (`packages/core`, `packages/mcp`). Only the runtime wrapper differs: `apps/edge` for Supabase, `apps/api` for Node.
@@ -240,7 +260,9 @@ claude mcp add firefinder -e FIREFINDER_API_URL=http://localhost:8787 -e FIREFIN
 ```text
 .
 ├── .claude-plugin/marketplace.json   Claude Code marketplace (lists plugins/firefinder)
-├── plugins/firefinder/               Claude Code plugin: .mcp.json, skill, behavior evals
+├── plugins/firefinder/               Claude Code plugin: .mcp.json, skills, failed-command hook, behavior evals
+├── .agents/plugins/marketplace.json  Codex and ChatGPT marketplace (lists plugins/firefinder-codex)
+├── plugins/firefinder-codex/         Codex and ChatGPT plugin: .mcp.json, skills
 ├── packages/
 │   ├── core/                         Domain logic: validation, privacy filter, ranking, dedupe, auth, rate limits, store, HTTP app
 │   ├── client/                       Typed HTTP client shared by every integration
@@ -437,9 +459,10 @@ All options are in [`.env.example`](.env.example). The Node server runs anywhere
 | `npm run db:migrate` | Apply migrations to `DATABASE_URL` |
 | `npm run keys:create -- --name <n> [--scopes read,write]` | Create an API key (`--list`, `--revoke <prefix>`) |
 | `npm run build:mcp` / `build:edge` | Bundle the stdio MCP server / Edge Function |
-| `npm run export:claude` | Regenerate the files derived from the MCP server: Claude API tools, system prompt, plugin skill, eval mocks |
+| `npm run export:claude` | Regenerate the files derived from the MCP server: Claude API tools, system prompt, plugin skills and hook, eval mocks |
 | `claude plugin validate plugins/firefinder` | Validate the Claude Code plugin |
 | `claude plugin eval plugins/firefinder --ablation none --no-publish` | Claude's zero-touch decisions, tested with real Claude sessions and mocked FireFinder |
+| `claude plugin eval plugins/firefinder --eval-dir evals-shell --allow-tools Bash --scaffold --ablation none --no-publish` | The failed-command hook, with real failing commands (macOS, Linux or WSL2: it needs Claude Code's sandbox) |
 
 The smoke tests never leave data behind in a shared database. Against a deployed server they only write when `FIREFINDER_ADMIN_KEY` is set, and they disable their test record afterwards.
 
@@ -470,7 +493,7 @@ The most important test is the **chain reaction**: User A searches, finds nothin
 Not built yet on purpose; the architecture is ready for each:
 
 - **ChatGPT and other assistants.** They use the same HTTP API or the remote MCP endpoint, so a fix found through Claude helps ChatGPT users too.
-- **Directory listings.** Submitting the connector to Claude's connector directory, and the plugin to a public plugin marketplace.
+- **Directory listings.** Submitting the connector to Claude's connector directory, the Claude Code plugin to a public plugin marketplace, and the Codex and ChatGPT plugin to OpenAI's plugin directory (which needs the domain challenge at `/.well-known/openai-apps-challenge`).
 - **Browser extension** on top of `packages/client`.
 - **Community mirrors and self-hosted federation.** UUIDv7 IDs and a portable schema make this possible; no sync protocol exists yet.
 - **Per-user keys and anonymous attestations** for stronger vote integrity.

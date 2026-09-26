@@ -1,0 +1,6 @@
+{
+  "hookSpecificOutput": {
+    "hookEventName": "PostToolUseFailure",
+    "additionalContext": "FireFinder: that command failed. If the failure is one other people plausibly hit too (a dependency, install, build tool, runtime or SDK version, environment, configuration, network, auth or deploy error) rather than a bug in the code being worked on or an expected failure such as a failing test, search FireFinder before trying fixes: call FireFinder's search_firefinder tool with a short generalized problem, software set to the one named product, and the key error text with paths, usernames, hostnames and secrets removed. Search once per distinct problem, not after every retry. If nothing comes back, carry on without mentioning FireFinder. Otherwise, or if FireFinder isn't connected, ignore this note."
+  }
+}

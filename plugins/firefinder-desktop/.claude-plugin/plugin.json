@@ -1,0 +1,13 @@
+{
+  "name": "firefinder",
+  "displayName": "FireFinder",
+  "version": "0.1.0",
+  "description": "When you're stuck in the fire, find the way out. Claude checks a shared memory of verified fixes before solving everyday and technical problems, remembers the fixes that work, and adds /firefinder commands to search, look up and record fixes yourself. No account, no API key.",
+  "author": {
+    "name": "FireFinder contributors"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/MichaelCodeToLimit/FireFinder",
+  "repository": "https://github.com/MichaelCodeToLimit/FireFinder",
+  "keywords": ["troubleshooting", "how-to", "everyday-fixes", "shared-memory", "verified-fixes"]
+}

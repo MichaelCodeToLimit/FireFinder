@@ -1,6 +1,6 @@
 /**
- * Remote MCP endpoint for claude.ai, Claude mobile and any MCP client that
- * speaks Streamable HTTP + OAuth 2.1 (MCP authorization spec 2025-11-25).
+ * Remote MCP endpoint for claude.ai, Claude mobile, ChatGPT, Codex and any MCP
+ * client that speaks Streamable HTTP + OAuth 2.1 (MCP authorization spec 2025-11-25).
  *
  *   /mcp                                    MCP (Streamable HTTP, stateless, JSON responses)
  *   /.well-known/oauth-protected-resource   RFC 9728 metadata (linked from every 401)
@@ -41,6 +41,8 @@ export interface RemoteMcpConfig {
   codeTtlSeconds: number;
   /** Exact redirect URIs accepted at client registration (besides loopback). */
   allowedRedirectUris: string[];
+  /** Redirect URIs accepted by pattern, for callbacks that carry a per-connection id. */
+  allowedRedirectPatterns: RegExp[];
   /** Accept http://localhost, 127.0.0.1 and [::1] redirects on any port (Claude Code, MCP Inspector). */
   allowLoopbackRedirects: boolean;
   /** New identities per IP address (the user's browser) per hour and per day. */
@@ -55,7 +57,13 @@ export const DEFAULT_REMOTE_MCP_CONFIG: RemoteMcpConfig = {
   accessTokenTtlSeconds: 3600,
   refreshTokenTtlSeconds: 90 * 24 * 3600,
   codeTtlSeconds: 300,
-  allowedRedirectUris: ['https://claude.ai/api/mcp/auth_callback'],
+  allowedRedirectUris: [
+    'https://claude.ai/api/mcp/auth_callback',
+    // ChatGPT and Codex use this stable callback because /oauth/authorize returns `iss` (RFC 9207).
+    'https://chatgpt.com/connector_platform_oauth_redirect',
+  ],
+  // ChatGPT's per-connection callback, which it uses with servers that don't return `iss`.
+  allowedRedirectPatterns: [/^https:\/\/chatgpt\.com\/connector\/oauth\/[A-Za-z0-9_-]{1,128}$/],
   allowLoopbackRedirects: true,
   identitiesPerIpPerHour: 10,
   identitiesPerIpPerDay: 30,
@@ -173,6 +181,7 @@ export function createRemoteMcpApp(options: RemoteMcpOptions): Hono {
     }
     if (url.hash) return false;
     if (config.allowedRedirectUris.includes(uri)) return true;
+    if (config.allowedRedirectPatterns.some((pattern) => pattern.test(uri))) return true;
     return config.allowLoopbackRedirects && url.protocol === 'http:' && isLoopback(url.hostname);
   };
 
@@ -188,7 +197,7 @@ export function createRemoteMcpApp(options: RemoteMcpOptions): Hono {
         return registrationError(
           c,
           'invalid_redirect_uri',
-          `Redirect URI not allowed: ${String(uri).slice(0, 200)}. FireFinder accepts Claude's callback and loopback addresses.`,
+          `Redirect URI not allowed: ${String(uri).slice(0, 200)}. FireFinder accepts Claude's and ChatGPT's callbacks and loopback addresses.`,
         );
       }
     }
@@ -400,7 +409,7 @@ export function createRemoteMcpApp(options: RemoteMcpOptions): Hono {
     });
     const server = createFireFinderMcpServer(operations, {
       source: 'claude-remote-mcp',
-      authHint: 'Reconnect FireFinder in Claude (Settings > Connectors) to renew its authorization.',
+      authHint: 'Reconnect FireFinder in your assistant\'s connector or plugin settings to renew its authorization.',
     });
     const transport = new WebStandardStreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true });
     await server.connect(transport);

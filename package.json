@@ -35,7 +35,8 @@
     "demo": "node --env-file-if-exists=.env scripts/demo.ts",
     "export:claude": "node scripts/export-claude-tools.ts",
     "deploy:edge": "npm run build:edge && supabase functions deploy firefinder --use-api",
-    "smoke:mcp": "node --env-file-if-exists=.env scripts/mcp-smoke.ts"
+    "smoke:mcp": "node --env-file-if-exists=.env scripts/mcp-smoke.ts",
+    "package:desktop": "node scripts/package-desktop-plugin.ts"
   },
   "devDependencies": {
     "@electric-sql/pglite-socket": "0.2.11",

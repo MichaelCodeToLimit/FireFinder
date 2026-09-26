@@ -1,0 +1,5 @@
+interface:
+  display_name: "FireFinder: it failed"
+  short_description: "Report that a FireFinder fix did not work"
+policy:
+  allow_implicit_invocation: false

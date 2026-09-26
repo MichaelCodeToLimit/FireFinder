@@ -12,6 +12,7 @@ node_modules/
 .cache/
 
 # Build output
+dist/
 packages/*/dist/
 supabase/functions/firefinder/index.js
 *.tsbuildinfo
@@ -31,4 +32,4 @@ coverage/
 .claude/
 
 # Plugin eval results
-plugins/*/evals/results/
+plugins/*/evals*/results/

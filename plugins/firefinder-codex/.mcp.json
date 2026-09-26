@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "firefinder": {
+      "type": "http",
+      "url": "https://wmrkcgivrurnycfqjznp.supabase.co/functions/v1/firefinder/mcp"
+    }
+  }
+}

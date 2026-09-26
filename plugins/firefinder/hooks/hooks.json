@@ -1,0 +1,677 @@
+{
+  "description": "Reminds Claude to check FireFinder when a package manager, toolchain, container, deploy or git remote command fails.",
+  "hooks": {
+    "PostToolUseFailure": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(npm *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(pnpm *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(yarn *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(bun *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(node *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(deno *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(pip *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(pip3 *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(python *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(python3 *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(py *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(uv *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(poetry *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(conda *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(cargo *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(rustup *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(go *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(mvn *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(gradle *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(./gradlew *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(dotnet *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(gem *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(bundle *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(composer *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(flutter *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(pod *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(xcodebuild *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(make *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(cmake *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(sudo *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(brew *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(winget *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(choco *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(docker *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(docker-compose *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(podman *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(kubectl *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(helm *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(terraform *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(vercel *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(netlify *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(supabase *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(firebase *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(wrangler *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(fly *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(flyctl *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(heroku *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(gcloud *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(aws *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(az *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(git clone *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(git push *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(git pull *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(git fetch *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "Bash(ssh *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "PowerShell(npm *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(pnpm *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(yarn *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(bun *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(node *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(deno *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(pip *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(pip3 *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(python *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(python3 *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(py *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(uv *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(poetry *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(conda *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(cargo *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(rustup *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(go *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(mvn *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(gradle *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(./gradlew *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(dotnet *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(gem *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(bundle *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(composer *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(flutter *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(pod *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(xcodebuild *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(make *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(cmake *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(sudo *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(brew *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(winget *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(choco *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(docker *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(docker-compose *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(podman *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(kubectl *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(helm *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(terraform *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(vercel *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(netlify *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(supabase *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(firebase *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(wrangler *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(fly *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(flyctl *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(heroku *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(gcloud *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(aws *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(az *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(git clone *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(git push *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(git pull *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(git fetch *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "if": "PowerShell(ssh *)",
+            "command": "cat \"${CLAUDE_PLUGIN_ROOT}/hooks/failed-command.json\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -30,7 +30,7 @@ How it works, and how it's protected: [docs/REMOTE_MCP.md](../../docs/REMOTE_MCP
 
 ## Claude Code
 
-Use the plugin: it bundles the remote server plus a skill with the same guidance.
+Use the plugin. It bundles the remote server, a skill with the same guidance, a hook that has Claude check FireFinder when an install, build or deploy command it runs fails, and the `/firefinder:search` and `/firefinder:fire` commands.
 
 ```text
 /plugin marketplace add https://github.com/MichaelCodeToLimit/FireFinder.git

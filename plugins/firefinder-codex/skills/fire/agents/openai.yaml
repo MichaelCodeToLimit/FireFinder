@@ -1,0 +1,5 @@
+interface:
+  display_name: "FireFinder: look up a fix"
+  short_description: "Show one fix by its FIRE number, with its confirmations"
+policy:
+  allow_implicit_invocation: false

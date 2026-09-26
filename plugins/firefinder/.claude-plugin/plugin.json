@@ -1,7 +1,7 @@
 {
   "name": "firefinder",
   "displayName": "FireFinder",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "When you're stuck in the fire, find the way out. Claude automatically checks a shared memory of verified fixes before solving technical problems, and remembers the fixes that work. No account, no API key.",
   "author": {
     "name": "FireFinder contributors"

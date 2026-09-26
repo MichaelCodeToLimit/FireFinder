@@ -1,4 +1,4 @@
-# Remote MCP: FireFinder in claude.ai, Claude mobile, Claude Desktop and Claude Code
+# Remote MCP: FireFinder in claude.ai, Claude Desktop and mobile, Claude Code, Codex and ChatGPT
 
 The remote MCP endpoint lets anyone connect FireFinder to Claude **once**, with no account and no API key. After that, FireFinder works automatically: Claude checks it before solving problems people get stuck on (technical or everyday), stays invisible when it has nothing, and records outcomes from the user's own words.
 
@@ -55,7 +55,7 @@ claude.ai, Claude mobile and Claude Desktop require OAuth for remote connectors.
 
 1. Claude calls `/mcp` without a token. It gets `401` with `WWW-Authenticate: Bearer resource_metadata="…/.well-known/oauth-protected-resource", scope="firefinder:read firefinder:write"`.
 2. Claude reads the protected-resource metadata, then the authorization-server metadata. On Supabase that metadata is found at `…/firefinder/.well-known/openid-configuration`, the path-appended OpenID discovery form, because Supabase can't serve `/.well-known` at the domain root.
-3. Claude registers itself (`POST /oauth/register`, RFC 7591). Registration is **stateless**: the `client_id` is a signed token listing the redirect URIs, so registration spam costs no storage. Only Claude's callback (`https://claude.ai/api/mcp/auth_callback`) and loopback addresses (Claude Code, MCP Inspector) are accepted as redirect URIs.
+3. Claude registers itself (`POST /oauth/register`, RFC 7591). Registration is **stateless**: the `client_id` is a signed token listing the redirect URIs, so registration spam costs no storage. Only Claude's callback (`https://claude.ai/api/mcp/auth_callback`), ChatGPT's callbacks (`https://chatgpt.com/connector_platform_oauth_redirect`, and `https://chatgpt.com/connector/oauth/<id>` as a fallback) and loopback addresses (Claude Code, Codex CLI, MCP Inspector) are accepted as redirect URIs. ChatGPT and Codex pick the stable callback because the authorize step returns `iss` ([RFC 9207](https://www.rfc-editor.org/rfc/rfc9207)).
 4. The browser opens `GET /oauth/authorize` with PKCE (S256 only) and the `resource` parameter. **There is no login and no consent screen.** FireFinder mints a new *anonymous identity* and redirects straight back to Claude with a single-use code (valid 5 minutes, stored hashed).
 5. Claude exchanges the code (`POST /oauth/token`) and receives:
    - an **access token** valid for 1 hour, HMAC-signed, bound to the audience `…/mcp`;
@@ -143,7 +143,7 @@ The connector syncs to Claude Desktop and the mobile apps. It's enabled for new 
 
 ### Claude Code
 
-Install the plugin, which bundles the remote server and the FireFinder skill:
+Install the plugin, which bundles the remote server, the FireFinder skill, a hook that has Claude check FireFinder when an install, build or deploy command it runs fails, and the `/firefinder:search` and `/firefinder:fire` commands:
 
 ```text
 /plugin marketplace add https://github.com/MichaelCodeToLimit/FireFinder.git
@@ -153,13 +153,29 @@ Install the plugin, which bundles the remote server and the FireFinder skill:
 /plugin install firefinder@firefinder
 ```
 
-Then run `/mcp`, choose **firefinder → Authenticate** once. The plugin's `.mcp.json` points at the public instance; for your own deployment, change its URL in a fork or use `claude mcp add` below.
+Then run `/mcp`, choose **firefinder → Authenticate** once. If you've also added FireFinder as a claude.ai connector, Claude Code keeps one of the two, since they share a URL. The plugin works with either. The plugin's `.mcp.json` points at the public instance; for your own deployment, change its URL in a fork or use `claude mcp add` below.
 
 Or, without the plugin:
 
 ```bash
 claude mcp add --transport http firefinder https://<ref>.supabase.co/functions/v1/firefinder/mcp
 ```
+
+### Codex and ChatGPT
+
+One plugin, [plugins/firefinder-codex](../plugins/firefinder-codex), serves both. It bundles the remote server, the zero-touch skill and five skills the user can invoke (`search`, `fire`, `worked`, `failed`, `help`). Codex has no failed-tool hook event and hooks don't run in ChatGPT chat, so the skill carries the failed-command guidance instead.
+
+```bash
+codex plugin marketplace add MichaelCodeToLimit/FireFinder
+```
+
+```bash
+codex plugin add firefinder@firefinder
+```
+
+Then `codex mcp login firefinder` once. The ChatGPT desktop app reads the same marketplaces: install **FireFinder** from **Plugins**. On ChatGPT on the web, turn on **Developer mode** and add the `/mcp` URL at [chatgpt.com/plugins](https://chatgpt.com/plugins) with OAuth and no client credentials.
+
+To publish in OpenAI's plugin directory, submit the `/mcp` URL through the [plugin submission portal](https://platform.openai.com/plugins) with the plugin's skills. The portal needs a domain challenge served at `/.well-known/openai-apps-challenge` on the MCP host, which Supabase can't serve at the domain root, so a directory listing needs a custom domain.
 
 ---
 
@@ -172,6 +188,7 @@ claude mcp add --transport http firefinder https://<ref>.supabase.co/functions/v
 | Evidence classification ("that worked" / "still broken" / "thanks") | `npx vitest run tests/unit/evidence.test.ts` |
 | The live deployment, end to end, connecting like claude.ai | `npm run smoke:mcp` |
 | Claude's actual decisions with the plugin (real Claude, mocked FireFinder) | `claude plugin eval plugins/firefinder --ablation none --no-publish --max-cost-usd 3` |
+| The plugin's failed-command hook, with real failing commands (macOS, Linux or WSL2) | `claude plugin eval plugins/firefinder --eval-dir evals-shell --allow-tools Bash --scaffold --ablation none --no-publish` |
 | Manual poking | [MCP Inspector](https://github.com/modelcontextprotocol/inspector): `npx @modelcontextprotocol/inspector`, transport "Streamable HTTP", the `/mcp` URL (loopback redirects are allowed) |
 
 ## Limitations

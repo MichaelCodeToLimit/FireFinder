@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>FireFinder</title>
-<meta name="description" content="FireFinder gives Claude a shared memory of fixes that people confirmed worked. Connect it once and Claude checks it before solving a technical problem.">
+<meta name="description" content="FireFinder gives Claude, ChatGPT and Codex a shared memory of fixes that people confirmed worked. Connect it once and your assistant checks it before solving a problem.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="FireFinder">
-<meta property="og:description" content="When you're stuck in the fire, find the way out. A shared memory of verified fixes for Claude. No account, no API key.">
+<meta property="og:description" content="When you're stuck in the fire, find the way out. A shared memory of verified fixes for Claude, ChatGPT and Codex. No account, no API key.">
 <meta name="theme-color" content="#eff3ee" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0e1512" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="brand/png/firefinder-icon-32.png" sizes="32x32" type="image/png">
@@ -431,7 +431,7 @@ h1 em { font-style: normal; color: var(--flare); }
 .code button.done { color: #7ee2a8; }
 @media (max-width: 560px) {
   .tabs { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
-  .tabs button:first-child { grid-column: 1 / -1; }
+  .tabs button:first-child, .tabs button:last-child { grid-column: 1 / -1; }
   .steps > li { grid-template-columns: 28px minmax(0, 1fr); gap: 12px; }
   .steps > li::before { width: 28px; height: 28px; font-size: 13px; }
   .step { padding-top: 2px; }
@@ -577,7 +577,7 @@ footer a:hover { color: var(--ink); text-decoration: underline; }
   <section class="hero">
     <div class="wrap">
       <div class="hero-copy">
-        <p class="eyebrow">Shared memory of verified fixes for Claude</p>
+        <p class="eyebrow">Shared memory of verified fixes for Claude, ChatGPT and Codex</p>
         <h1>When you're stuck in the fire, <em>find the way out.</em></h1>
         <p class="lede">FireFinder gives Claude a memory of fixes that people confirmed actually worked. Connect it once. From then on, Claude checks it before solving a technical problem and remembers every fix that works for the next person who hits it.</p>
         <div class="cta">
@@ -660,18 +660,19 @@ footer a:hover { color: var(--ink); text-decoration: underline; }
       <div class="section-head">
         <p class="eyebrow">Install</p>
         <h2>Connect it once. That's the whole setup.</h2>
-        <p>FireFinder is a remote MCP server. Add it to Claude and it works on its own from then on, in every conversation.</p>
+        <p>FireFinder is a remote MCP server. Add it to Claude, ChatGPT or Codex and it works on its own from then on, in every conversation.</p>
         <ul class="without" aria-label="What you don't need">
           <li>No account to create</li>
           <li>No API key to paste</li>
-          <li>No change to how you ask Claude for help</li>
+          <li>No change to how you ask for help</li>
         </ul>
       </div>
 
       <div>
-        <div class="tabs" role="tablist" aria-label="Where you use Claude">
+        <div class="tabs" role="tablist" aria-label="Where you use FireFinder">
           <button type="button" role="tab" id="tab-apps" aria-controls="install-apps" aria-selected="true">claude.ai, Desktop &amp; mobile</button>
           <button type="button" role="tab" id="tab-code" aria-controls="install-code" aria-selected="false" tabindex="-1">Claude Code</button>
+          <button type="button" role="tab" id="tab-openai" aria-controls="install-openai" aria-selected="false" tabindex="-1">ChatGPT &amp; Codex</button>
           <button type="button" role="tab" id="tab-self" aria-controls="install-self" aria-selected="false" tabindex="-1">Self-host</button>
         </div>
 
@@ -721,6 +722,31 @@ footer a:hover { color: var(--ink); text-decoration: underline; }
           <div class="panel-foot">
             <p>Prefer to skip the plugin? Add the server directly:</p>
             <div class="code"><pre><code>claude mcp add --transport http firefinder https://wmrkcgivrurnycfqjznp.supabase.co/functions/v1/firefinder/mcp</code></pre><button type="button" aria-label="Copy claude mcp add command">Copy</button></div>
+          </div>
+        </div>
+
+        <div class="panel" role="tabpanel" id="install-openai" aria-labelledby="tab-openai" tabindex="0">
+          <p class="panel-intro">One plugin works in Codex and in the ChatGPT desktop app.</p>
+          <ol class="steps">
+            <li><div class="step">
+              <h3>Install the plugin</h3>
+              <p>Run these two commands in a terminal, one at a time.</p>
+              <div class="code"><pre><code>codex plugin marketplace add MichaelCodeToLimit/FireFinder</code></pre><button type="button" aria-label="Copy codex marketplace command">Copy</button></div>
+              <div class="code"><pre><code>codex plugin add firefinder@firefinder</code></pre><button type="button" aria-label="Copy codex plugin add command">Copy</button></div>
+              <p class="note">In the ChatGPT desktop app, restart it after adding the marketplace, then install FireFinder from <b>Plugins</b>.</p>
+            </div></li>
+            <li><div class="step">
+              <h3>Sign in once</h3>
+              <div class="code"><pre><code>codex mcp login firefinder</code></pre><button type="button" aria-label="Copy codex mcp login command">Copy</button></div>
+              <p>A browser tab opens and returns immediately, because there's no login. In the ChatGPT app, connect it when asked.</p>
+            </div></li>
+            <li><div class="step">
+              <h3>Keep working</h3>
+              <p>The plugin includes a skill that tells the assistant when to search FireFinder and when to record a fix. To use it by hand, mention <code>search</code>, <code>fire</code>, <code>worked</code> or <code>failed</code> with <code>$</code> in Codex or <code>@</code> in ChatGPT.</p>
+            </div></li>
+          </ol>
+          <div class="panel-foot">
+            <p>ChatGPT on the web: turn on <b>Developer mode</b> under Settings → Security and login, then at <a href="https://chatgpt.com/plugins">chatgpt.com/plugins</a> select <b>+</b> and add the connector URL with OAuth, leaving the client ID and secret empty.</p>
           </div>
         </div>
 
@@ -981,7 +1007,7 @@ footer a:hover { color: var(--ink); text-decoration: underline; }
     requestAnimationFrame(frame);
   }
 
-  // Install tabs, deep-linkable as #install-apps, #install-code, #install-self.
+  // Install tabs, deep-linkable as #install-apps, #install-code, #install-openai, #install-self.
   const tabs = [...document.querySelectorAll('[role="tab"]')];
   const select = (tab, focus) => {
     for (const t of tabs) {

@@ -83,8 +83,24 @@ function normalize(text: string): string {
     .trim();
 }
 
+/**
+ * The desktop plugin's /firefinder:worked and /firefinder:failed commands:
+ * typing one is the user stating the outcome. A note after the command can
+ * back it up, but a note that contradicts it makes the whole thing unclear.
+ */
+const COMMAND = /^\/firefinder:(worked|failed)\b/;
+
 export function classifyUserEvidence(text: string): EvidenceVerdict {
-  let remaining = normalize(text);
+  const normalized = normalize(text);
+  const command = COMMAND.exec(normalized);
+  if (!command) return classifyWords(normalized);
+  const stated: EvidenceVerdict = command[1] === 'worked' ? 'worked' : 'failed';
+  const note = classifyWords(normalized.slice(command[0].length).trim());
+  return note === 'unclear' || note === stated ? stated : 'unclear';
+}
+
+function classifyWords(normalized: string): EvidenceVerdict {
+  let remaining = normalized;
   if (!remaining) return 'unclear';
   if (UNCERTAIN.some((pattern) => pattern.test(remaining))) return 'unclear';
 

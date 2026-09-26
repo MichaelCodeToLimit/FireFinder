@@ -1,0 +1,34 @@
+{
+  "name": "firefinder",
+  "version": "0.1.0",
+  "description": "When you're stuck in the fire, find the way out. Checks a shared memory of verified fixes before solving everyday and technical problems, and remembers the fixes that work. No account, no API key.",
+  "author": {
+    "name": "FireFinder contributors",
+    "url": "https://github.com/MichaelCodeToLimit/FireFinder"
+  },
+  "homepage": "https://github.com/MichaelCodeToLimit/FireFinder",
+  "repository": "https://github.com/MichaelCodeToLimit/FireFinder",
+  "license": "MIT",
+  "keywords": ["troubleshooting", "errors", "debugging", "how-to", "everyday-fixes", "shared-memory", "verified-fixes"],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "FireFinder",
+    "shortDescription": "Verified fixes for problems people get stuck on",
+    "longDescription": "FireFinder is a shared memory of problems people got stuck on and the fixes that worked, with how many people confirmed each. Once it's installed, the assistant checks FireFinder before solving a technical problem (an error, a failing build or deploy, a broken setting) or an everyday one (a stain, a household repair, a travel snag) and offers a verified fix first when one fits. When you say a fix worked or failed, it records that for the next person. It never saves conversations, records nothing unless your own words say the fix worked or failed, and needs no account.",
+    "developerName": "FireFinder contributors",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write"],
+    "websiteURL": "https://github.com/MichaelCodeToLimit/FireFinder",
+    "privacyPolicyURL": "https://github.com/MichaelCodeToLimit/FireFinder/blob/main/docs/PRIVACY.md",
+    "defaultPrompt": [
+      "npm install fails with ERESOLVE unable to resolve dependency tree",
+      "How do I get a red wine stain out of a wool rug?",
+      "Search FireFinder for Docker Desktop stuck on starting"
+    ],
+    "brandColor": "#E0520E",
+    "composerIcon": "./assets/icon.svg",
+    "logo": "./assets/logo.png",
+    "logoDark": "./assets/logo-dark.png"
+  }
+}

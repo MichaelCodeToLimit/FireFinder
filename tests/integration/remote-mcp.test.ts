@@ -98,7 +98,7 @@ describe('OAuth 2.1 for claude.ai', () => {
     expect(tokens.scope).toBe('firefinder:read firefinder:write');
   });
 
-  it('only registers Claude and loopback redirect URIs', async () => {
+  it('only registers Claude, ChatGPT and loopback redirect URIs', async () => {
     const register = (redirect: string) =>
       fetch(`${server.baseUrl}/oauth/register`, {
         method: 'POST',
@@ -107,9 +107,20 @@ describe('OAuth 2.1 for claude.ai', () => {
       });
     expect((await register(CLAUDE_CALLBACK)).status).toBe(201);
     expect((await register('http://localhost:53682/callback')).status).toBe(201);
-    const evil = await register('https://evil.example/steal');
-    expect(evil.status).toBe(400);
-    expect((await evil.json()).error).toBe('invalid_redirect_uri');
+    expect((await register('http://127.0.0.1:1455/callback')).status).toBe(201);
+    expect((await register('https://chatgpt.com/connector_platform_oauth_redirect')).status).toBe(201);
+    expect((await register('https://chatgpt.com/connector/oauth/Ab3_x-9')).status).toBe(201);
+    for (const evil of [
+      'https://evil.example/steal',
+      'https://chatgpt.com.evil.example/connector_platform_oauth_redirect',
+      'https://chatgpt.com/connector/oauth/abc/../../steal',
+      'https://chatgpt.com/connector/oauth/abc?next=https://evil.example',
+      'http://chatgpt.com/connector_platform_oauth_redirect',
+    ]) {
+      const res = await register(evil);
+      expect(res.status, evil).toBe(400);
+      expect((await res.json()).error).toBe('invalid_redirect_uri');
+    }
   });
 
   async function registeredClient(): Promise<string> {

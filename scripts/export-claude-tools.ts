@@ -10,7 +10,13 @@ export const EXPORT_PATHS = {
   tools: 'integrations/claude/tools.json',
   systemPrompt: 'integrations/claude/system-prompt.md',
   pluginSkill: 'plugins/firefinder/skills/firefinder/SKILL.md',
+  pluginHooks: 'plugins/firefinder/hooks/hooks.json',
+  pluginHookHint: 'plugins/firefinder/hooks/failed-command.json',
   pluginToolsList: 'plugins/firefinder/evals/mocks/firefinder/_tools.json',
+  pluginShellEvalToolsList: 'plugins/firefinder/evals-shell/mocks/firefinder/_tools.json',
+  desktopPluginSkill: 'plugins/firefinder-desktop/skills/firefinder/SKILL.md',
+  desktopPluginToolsList: 'plugins/firefinder-desktop/evals/mocks/firefinder/_tools.json',
+  codexPluginSkill: 'plugins/firefinder-codex/skills/firefinder/SKILL.md',
 } as const;
 
 const rendered = await renderClaudeExports();

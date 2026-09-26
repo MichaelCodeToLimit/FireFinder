@@ -1,0 +1,5 @@
+interface:
+  display_name: "FireFinder: search"
+  short_description: "Search verified fixes and see the results, even with no match"
+policy:
+  allow_implicit_invocation: false

@@ -90,4 +90,19 @@ describe('classifyUserEvidence', () => {
   ])('"%s" is not evidence either way', (text) => {
     expect(classifyUserEvidence(text)).toBe('unclear');
   });
+
+  // The desktop plugin's commands state the outcome; a note can back it up or contradict it.
+  it.each([
+    ['/firefinder:worked', 'worked'],
+    ['/firefinder:worked the vinegar trick got it out', 'worked'],
+    ['/firefinder:worked FIRE #42, printer prints again', 'worked'],
+    ['/firefinder:failed', 'failed'],
+    ['/firefinder:failed FIRE #42 - the Wi-Fi still drops every few minutes', 'failed'],
+    ["/firefinder:failed it didn't work", 'failed'],
+    ['/firefinder:failed it worked after all', 'unclear'],
+    ['/firefinder:worked nope, still broken', 'unclear'],
+    ['/firefinder:workedout', 'unclear'],
+  ])('"%s" is %s', (text, verdict) => {
+    expect(classifyUserEvidence(text)).toBe(verdict);
+  });
 });
