@@ -28,7 +28,7 @@ FireFinder's rule: **store the reusable fix, never the person or the conversatio
 
 ## Automatic recording (zero-touch)
 
-Claude records outcomes on its own, but only from the user's own words: "that worked", "still broken". The words are checked on the server to decide whether anything is recorded, and are then discarded; they're never stored. Recording something requires clear evidence. Conversations, Claude's reasoning, and anything from general questions are never sent to FireFinder.
+Claude records outcomes on its own, but only from the user's own words: "that worked", "still broken". The words are checked on the server to decide whether anything is recorded, and are then discarded; they're never stored. Recording something requires clear evidence. Conversations, Claude's reasoning, and anything from general questions are never sent to FireFinder. Claude is instructed never to use FireFinder for health, medical, legal, financial or relationship matters, where even a generalized problem can be personal.
 
 ## The privacy filter (`packages/core/src/privacy.ts`)
 

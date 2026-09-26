@@ -2,7 +2,7 @@
 
 Connect FireFinder once. After that, Claude uses it by itself:
 
-- **Searches first.** Whenever you describe a concrete technical problem (an error, crash, failing build/install/deploy, broken setting or device), Claude calls `search_firefinder` before answering. It gets back only strong, verified matches.
+- **Searches first.** Whenever you're stuck on a practical problem, technical (an error, crash, failing build/install/deploy, broken setting or device) or everyday (a stain, a household repair, a travel snag), Claude calls `search_firefinder` before answering. It gets back only strong, verified matches.
 - **Uses a fix critically.** If a verified fix fits your situation, Claude offers it first, e.g. "This is a known fix, confirmed by 12 people".
 - **Stays invisible.** If nothing fits, Claude doesn't mention FireFinder and solves the problem normally.
 - **Records outcomes from your own words:**
@@ -11,7 +11,7 @@ Connect FireFinder once. After that, Claude uses it by itself:
   - "that fixed it" on Claude's own fix → `submit_solution`
 
   The write tools require `user_evidence` (your words), and the server checks them. "Thanks", "I'll try that" or Claude's confidence never count.
-- **Never shares anything personal.** Nothing is saved from general questions, writing, math or small talk. What does get saved is generalized problem/fix text, without personal details.
+- **Never shares anything personal.** Nothing is saved from general questions, writing, math or small talk, and FireFinder is never used for health, legal, financial or relationship matters. What does get saved is generalized problem/fix text, without personal details.
 
 The guidance Claude receives is in [system-prompt.md](system-prompt.md), which is generated from the MCP server.
 

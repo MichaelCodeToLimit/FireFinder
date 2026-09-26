@@ -8,4 +8,4 @@
    Solution:
    Native modules were compiled for the previous Node version. Run `npm rebuild` (or `npx electron-rebuild` for Electron apps), then start the app again.
 
-When the user later says whether it worked, call confirm_solution or report_solution with its id and their words.
+When the user later says whether it worked, however casually ("this worked", "still broken"), call confirm_solution or report_solution with its id and their words.

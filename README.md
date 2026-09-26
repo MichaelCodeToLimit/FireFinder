@@ -8,7 +8,7 @@ FireFinder is an open-source **shared solution memory for AI assistants**. It wo
 
 ## The idea
 
-- A **fire** is a problem someone is stuck with: an error message, a failing build or deploy, a broken setting, a device that stopped working.
+- A **fire** is a problem someone is stuck with: an error message, a failing build or deploy, a broken setting, a device that stopped working, or an everyday snag like a stubborn stain or a rental car you can't return on a Sunday.
 - **FireFinder** finds a solution someone already discovered for that fire, and verified.
 
 In practice:
@@ -16,7 +16,7 @@ In practice:
 - **Claude searches FireFinder automatically** whenever you describe a problem where a known fix could help.
 - **Strong, verified solutions are returned to Claude**, which offers them first ("known fix, confirmed by 12 people") and still checks that they fit your situation.
 - **When no solution exists, FireFinder stays invisible.** There's no "no results found"; Claude just solves the problem normally.
-- **When you naturally confirm that a fix worked** ("that fixed it", "it's working now"), FireFinder records it automatically. Only the generalized problem and fix are kept, never the conversation.
+- **When you naturally confirm that a fix worked** ("this worked", "amazing, that worked!", "that did it"), FireFinder records it automatically. Only the generalized problem and fix are kept, never the conversation.
 - **Future users benefit.** The next person with the same fire gets the verified fix first, even if they describe it in completely different words.
 
 ```text
@@ -24,14 +24,14 @@ ONE PERSON SOLVES IT  →  FIREFINDER REMEMBERS  →  NEXT PERSON ASKS
         ↑                                              ↓
   REPEAT  ←  FIREFINDER GETS STRONGER  ←  ANOTHER PERSON CONFIRMS IT  ←  CLAUDE USES IT
 
-User message ─→ Claude: a reusable technical problem? ── no ──→ answer normally
+User message ─→ Claude: stuck on a problem others hit too? ── no ──→ answer normally
                         │ yes
                         ▼
                 search_firefinder (strong, verified matches only)
                  ├─ match    → "🔥 Previously solved" → Claude offers it first
                  └─ no match → silent; Claude solves it normally
                         ▼
-User: "That fixed it" → recorded automatically (submit or confirm)
+User: "Amazing, that worked!" → recorded automatically (submit or confirm)
 User: "Still broken"  → failure recorded automatically (report)
 "Thanks" / "I'll try it" / silence → nothing recorded
 ```
@@ -56,7 +56,7 @@ You connect FireFinder **once**. After that, you never need to:
 - manage a FireFinder account,
 - enter an API key.
 
-Claude decides when a problem is relevant, searches, and records outcomes from your own words. **The server checks those words:** "That fixed it" is recorded. "Thanks", "I'll try that", silence and Claude's own confidence are not. Nothing is sent to FireFinder from general questions, writing, math or small talk. With real Claude sessions, this behavior passed 14 of 14 [plugin eval](plugins/firefinder/evals) runs.
+Claude decides when a problem is relevant (technical or everyday), searches, and records outcomes from your own words, however casually you say them. **The server checks those words:** "this worked", "that did it" and "the stain is gone" are recorded. "Thanks", "I'll try that", praise before you've tried it, a partial improvement, silence and Claude's own confidence are not. Nothing is sent to FireFinder from general questions, writing, math or small talk, and never anything about health, legal, financial or relationship matters. This behavior is tested with real Claude sessions in the [plugin evals](plugins/firefinder/evals).
 
 ---
 
@@ -123,7 +123,7 @@ The same works from a terminal with `claude plugin marketplace add …` and `cla
 
 | Tool | Claude uses it… |
 |---|---|
-| `search_firefinder` | on its own, **before** answering a concrete technical problem; it returns only strong verified matches, or nothing |
+| `search_firefinder` | on its own, **before** answering a problem you're stuck on, technical or everyday; it returns only strong verified matches, or nothing |
 | `get_fire` | to look up a specific fix ("FIRE #123") |
 | `submit_solution` | automatically, when the user's own words confirm a fix Claude suggested worked |
 | `confirm_solution` | automatically, when the user says a FireFinder fix worked |

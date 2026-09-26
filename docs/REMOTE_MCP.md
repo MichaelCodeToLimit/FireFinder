@@ -1,6 +1,6 @@
 # Remote MCP: FireFinder in claude.ai, Claude mobile, Claude Desktop and Claude Code
 
-The remote MCP endpoint lets anyone connect FireFinder to Claude **once**, with no account and no API key. After that, FireFinder works automatically: Claude checks it before solving technical problems, stays invisible when it has nothing, and records outcomes from the user's own words.
+The remote MCP endpoint lets anyone connect FireFinder to Claude **once**, with no account and no API key. After that, FireFinder works automatically: Claude checks it before solving problems people get stuck on (technical or everyday), stays invisible when it has nothing, and records outcomes from the user's own words.
 
 ```text
 Claude (claude.ai · mobile · Desktop · Claude Code)
@@ -20,18 +20,20 @@ The endpoint is part of the existing `firefinder` Edge Function; there is no sec
 
 Connected Claude receives FireFinder's guidance through the MCP `instructions` field, the tool descriptions, and in Claude Code also the plugin skill. It then acts on its own:
 
-1. **Decide:** is this a concrete technical problem someone else plausibly solved before? If not ("What's the capital of France?"), Claude doesn't touch FireFinder.
+1. **Decide:** is the user stuck on a practical problem someone else plausibly solved before? That covers technical problems and everyday ones (stains, household repairs, travel snags). If not ("What's the capital of France?"), or if it's about health, legal, financial or relationship matters, Claude doesn't touch FireFinder.
 2. **Search first:** Claude calls `search_firefinder` before answering. The tool returns only *strong, verified* matches: similarity ≥ 0.85, at least one real confirmation, at most 3 results.
 3. **Use it critically:** if a match fits, Claude offers it as the first thing to try, optionally saying naturally that it's a previously verified fix.
 4. **Stay invisible:** with no strong match, the tool answers "continue normally and do not mention FireFinder", and Claude simply solves the problem.
-5. **Record outcomes automatically, only from the user's own words:**
-   - "that worked" on a FireFinder fix → `confirm_solution`
-   - "still broken" → `report_solution`
-   - "that fixed it" on Claude's own fix → `submit_solution`, with a generalized problem and the fix that worked
+5. **Record outcomes automatically, only from the user's own words, however casual:**
+   - "this worked" / "amazing, that worked!" on a FireFinder fix → `confirm_solution`
+   - "still broken" / "the stain is still there" → `report_solution`
+   - "that did it" on any other fix, whether Claude suggested it or the user describes using it → `submit_solution`, with a generalized problem and the fix that worked
 
-Claude passes the user's words as `user_evidence`. **The server checks them** (`packages/core/src/evidence.ts`) and records nothing unless they clearly state the outcome. "Thanks", "I'll try that", questions, mixed signals and Claude's own confidence never count.
+Claude passes the user's words as `user_evidence`. **The server checks them** (`packages/core/src/evidence.ts`) and records nothing unless they clearly state the outcome. "Thanks", "I'll try that", praise alone ("perfect!"), partial improvements ("a bit lighter"), questions, mixed signals and Claude's own confidence never count.
 
-This behavior is tested with real Claude sessions: `claude plugin eval plugins/firefinder` passed 14 of 14 runs. See [Testing](#testing).
+The guidance is repeated in the tool descriptions, because some clients show Claude only those, and claude.ai may load connector tools on demand by matching what the user says against them.
+
+This behavior is tested with real Claude sessions: `claude plugin eval plugins/firefinder`. See [Testing](#testing).
 
 ## Tools
 

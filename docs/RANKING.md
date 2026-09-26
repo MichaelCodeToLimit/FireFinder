@@ -88,6 +88,20 @@ Measured with this repository's embedder:
 
 gte-small places unrelated technical sentences around 0.70–0.81 and paraphrases above 0.90. That's why the relevance floor is 0.80 and the default `min_similarity` is 0.83. If you change the embedding model, recalibrate these numbers; the `embedding_model` column records which model produced each vector.
 
+Everyday problems behave the same for paraphrases, but related-but-different problems score higher than unrelated technical ones:
+
+| Stored: "Pomegranate juice stain on a wooden table mat / wood surface" | Similarity |
+|---|---|
+| "pomegranate stain on my wood table" (same, production) | 0.969 |
+| "How do I get pomegranate juice out of a wooden table?" (same, production) | 0.931 |
+| "Pomegranate juice stain on a white cotton shirt" (different material) | 0.924 |
+| "Coffee stain on a wooden table" (different stain) | 0.907 |
+| "How to peel a pomegranate without making a mess" (different problem) | 0.865 |
+
+Similarity alone can't separate these, so Claude's automatic search keeps `min_similarity` at 0.85, and Claude judges whether a returned fix fits (the result shows the stored problem). Raising the threshold would drop real paraphrases.
+
+The software mismatch filter can't be relaxed by similarity either. The same symptom on different software scores 0.89–0.95 ("Printer prints blank pages" for HP Smart vs Canon PRINT: 0.949). The filter therefore only fires when both sides name a product, and Claude is told to set `software` only to one specific named product, never to a category like "cleaning" or "car rental".
+
 ## Duplicate detection (`packages/core/src/dedupe.ts`)
 
 A submission is merged into an existing record only when **all** of these hold:

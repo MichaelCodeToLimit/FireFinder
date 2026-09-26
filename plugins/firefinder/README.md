@@ -4,7 +4,7 @@
 
 Install once. After that, Claude:
 
-- **checks FireFinder first** whenever you describe a technical problem (errors, crashes, failing builds or deploys, broken settings), and uses a verified fix if one fits;
+- **checks FireFinder first** whenever you're stuck on a problem, technical (errors, crashes, failing builds or deploys, broken settings) or everyday (stains, household repairs, travel snags), and uses a verified fix if one fits;
 - **stays invisible** when there is nothing relevant: no "no results" messages;
 - **remembers fixes that worked**: when you say "that fixed it", the generalized problem and fix are saved for the next person, and confirmations of existing fixes are counted.
 
@@ -58,9 +58,9 @@ claude plugin eval plugins/firefinder --ablation none --no-publish --max-cost-us
 
 The evals run real Claude sessions against mocked FireFinder tools and check the behavior. Claude should:
 
-- search before answering a technical problem,
-- stay out of general questions,
+- search before answering a technical or everyday problem,
+- stay out of general questions and health matters,
 - stay silent on a miss,
-- record a fix only after the user confirms it,
+- record a fix as soon as the user confirms it, however casually ("Amazing, that worked!"),
 - record nothing after "I'll try that",
 - confirm or report FireFinder fixes from the user's own words.
